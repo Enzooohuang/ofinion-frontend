@@ -1,0 +1,50 @@
+Apple Inc.,AAPL
+Microsoft Corp,MSFT
+Nvidia Corp,NVDA
+Amazon.com Inc,AMZN
+Meta Platforms Inc.,META
+Alphabet Inc. Class A,GOOGL
+Berkshire Hathaway Inc.,BRK.B
+Alphabet Inc. Class C,GOOG
+Eli Lilly & Co.,LLY
+Broadcom Inc.,AVGO
+Tesla Inc.,TSLA
+JPMorgan Chase & Co.,JPM
+UnitedHealth Group Inc.,UNH
+Exxon Mobil Corp.,XOM
+Visa Inc.,V
+Procter & Gamble Co.,PG
+Johnson & Johnson,JNJ
+Costco Wholesale Corp.,COST
+Mastercard Inc.,MA
+Home Depot Inc.,HD
+AbbVie Inc.,ABBV
+Walmart Inc.,WMT
+Merck & Co. Inc.,MRK
+Netflix Inc.,NFLX
+Coca-Cola Co.,KO
+Bank of America Corp.,BAC
+Adobe Inc.,ADBE
+PepsiCo Inc.,PEP
+Chevron Corp.,CVX
+Salesforce Inc.,CRM
+Thermo Fisher Scientific Inc.,TMO
+Oracle Corp.,ORCL
+Advanced Micro Devices Inc.,AMD
+Linde plc,LIN
+Accenture plc,ACN
+McDonald's Corp.,MCD
+Cisco Systems Inc.,CSCO
+Wells Fargo & Co.,WFC
+Abbott Laboratories,ABT
+Philip Morris International Inc.,PM
+International Business Machines Corp.,IBM
+Texas Instruments Inc.,TXN
+Qualcomm Inc.,QCOM
+GE Aerospace,GE
+Intuit Inc.,INTU
+Danaher Corp.,DHR
+Verizon Communications Inc.,VZ
+Amgen Inc.,AMGN
+ServiceNow Inc.,NOW
+Intuitive Surgical Inc.,ISRG
