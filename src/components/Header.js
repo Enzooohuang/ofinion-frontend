@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -180,46 +180,47 @@ const Header = () => {
         )}
       </div>
       <div>
-        <button
-          onClick={() => navigate('/join')}
-          style={{
-            marginRight: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'green',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Join Free
-        </button>
-        <button
-          onClick={() => navigate('/pro')}
-          style={{
-            marginRight: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'orange',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Go Pro
-        </button>
-        <button
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: 'blue',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Log In
-        </button>
+        {user ? (
+          <>
+            <span>
+              Welcome, {user.email}, you have {user.times_remaining} times
+              remaining
+            </span>
+            <button
+              onClick={onLogout}
+              style={
+                {
+                  /* ... button styles ... */
+                }
+              }
+            >
+              Log Out
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => navigate('/join')}
+              style={
+                {
+                  /* ... button styles ... */
+                }
+              }
+            >
+              Join Free
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              style={
+                {
+                  /* ... button styles ... */
+                }
+              }
+            >
+              Log In
+            </button>
+          </>
+        )}
       </div>
     </header>
   );
