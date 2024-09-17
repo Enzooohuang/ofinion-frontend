@@ -13,7 +13,7 @@ const Header = ({ user, onLogout }) => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.post(
+        const response = await axios.get(
           'http://localhost:8000/api/companies/'
         );
         setCompanies(response.data);
@@ -36,7 +36,7 @@ const Header = ({ user, onLogout }) => {
           const symbol = company.symbol.toLowerCase();
           const name = company.name.toLowerCase();
           return (
-            symbol.includes(lowercasedTerm) || name.includes(lowercasedTerm)
+            symbol.startsWith(lowercasedTerm) || name.startsWith(lowercasedTerm)
           );
         })
         .slice(0, 10); // Limit to 10 results

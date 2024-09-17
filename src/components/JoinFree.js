@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import GoogleLoginButton from './GoogleLoginButton';
 
-const JoinFree = ({ onLogin }) => {
+const JoinFree = ({ onLogin, axiosInstance }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -13,7 +12,7 @@ const JoinFree = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         'http://localhost:8000/api/user/email-signup/',
         {
           email,
@@ -72,6 +71,7 @@ const JoinFree = ({ onLogin }) => {
       <GoogleLoginButton
         onSuccess={handleGoogleSignupSuccess}
         buttonText='Sign up with Google'
+        axiosInstance={axiosInstance}
       />
     </div>
   );

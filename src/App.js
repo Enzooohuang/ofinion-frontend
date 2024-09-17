@@ -8,26 +8,54 @@ import StockDetail from './components/StockDetail';
 import EventDetail from './components/EventDetail';
 import JoinFree from './components/JoinFree';
 import Login from './components/Login';
-import axios from 'axios'; // Added import for axios
+import axios from 'axios';
+import { getCsrfTokenFromCookie } from './utils/csrf';
+
+// Create a new axios instance with default config
+const axiosInstance = axios.create({
+  withCredentials: true,
+});
+
+// Add a request interceptor to include CSRF token
+axiosInstance.interceptors.request.use(
+  function (config) {
+    const csrfToken = getCsrfTokenFromCookie();
+    if (csrfToken) {
+      config.headers['X-CSRFToken'] = csrfToken;
+    }
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   const [user, setUser] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing user session on app load
-    // const checkUserSession = async () => {
-    //   try {
-    //     const response = await axios.get('http://localhost:8000/api/user/');
-    //     if (response.data.user) {
-    //       setUser(response.data.user);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error checking user session:', error);
-    //   }
-    // };
-    // checkUserSession();
+    const checkUserSession = async () => {
+      try {
+        const response = await axiosInstance.post(
+          'http://localhost:8000/api/user/check-session/'
+        );
+        if (response.data) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error('Error checking user session:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUserSession();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -35,7 +63,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:8000/api/user/email-logout/');
+      await axiosInstance.post('http://localhost:8000/api/user/email-logout/');
       setUser(null);
     } catch (error) {
       console.error('Error logging out:', error);
@@ -58,7 +86,7 @@ function App() {
               display: 'flex',
               flexDirection: 'column',
               flexGrow: 1,
-              overflow: 'hidden',
+              overflow: 'auto', // Changed from 'hidden' to 'auto'
               width: isCollapsed ? 'calc(100% - 60px)' : 'calc(100% - 300px)',
               transition: 'width 0.3s ease-in-out',
             }}
@@ -67,28 +95,42 @@ function App() {
               user={user}
               onLogout={handleLogout}
             />
-            <Routes>
-              <Route
-                path='/'
-                element={<MainContent />}
-              />
-              <Route
-                path='/stock/:symbol'
-                element={<StockDetail />}
-              />
-              <Route
-                path='/event'
-                element={<EventDetail />}
-              />
-              <Route
-                path='/join'
-                element={<JoinFree onLogin={handleLogin} />}
-              />
-              <Route
-                path='/login'
-                element={<Login onLogin={handleLogin} />}
-              />
-            </Routes>
+            <div style={{ flexGrow: 1, overflow: 'auto' }}>
+              {' '}
+              {/* Added this wrapper */}
+              <Routes>
+                <Route
+                  path='/'
+                  element={<MainContent />}
+                />
+                <Route
+                  path='/stock/:symbol'
+                  element={<StockDetail />}
+                />
+                <Route
+                  path='/stock/:symbol/event'
+                  element={<EventDetail />}
+                />
+                <Route
+                  path='/join'
+                  element={
+                    <JoinFree
+                      onLogin={handleLogin}
+                      axiosInstance={axiosInstance}
+                    />
+                  }
+                />
+                <Route
+                  path='/login'
+                  element={
+                    <Login
+                      onLogin={handleLogin}
+                      axiosInstance={axiosInstance}
+                    />
+                  }
+                />
+              </Routes>
+            </div>
           </div>
         </div>
       </Router>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 
-const GoogleLoginButton = ({ onSuccess, buttonText }) => {
+const GoogleLoginButton = ({ onSuccess, buttonText, axiosInstance }) => {
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -23,21 +22,17 @@ const GoogleLoginButton = ({ onSuccess, buttonText }) => {
         const userInfo = await response.json();
         console.log('User Info:', userInfo);
 
-        const result = await axios.post(
+        console.log(axiosInstance);
+
+        const result = await axiosInstance.post(
           'http://localhost:8000/api/user/google-login/',
           {
             email: userInfo.email,
             family_name: userInfo.family_name,
             given_name: userInfo.given_name,
-          },
-          {
-            // withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json',
-            },
           }
         );
-        console.log('Result:', result.data);
+        console.log('Result:', result);
         onSuccess(result.data);
       } catch (error) {
         console.error('Error with Google login:', error);

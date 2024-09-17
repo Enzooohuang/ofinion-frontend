@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import GoogleLoginButton from './GoogleLoginButton';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, axiosInstance }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -11,16 +10,16 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        'http://localhost:8000/api/user/login/',
+      const response = await axiosInstance.post(
+        'http://localhost:8000/api/user/email-login/',
         {
           email,
           password,
         }
       );
-      if (response.data.user) {
+      if (response.data) {
         console.log('Response:', response.data);
-        onLogin(response.data.user);
+        onLogin(response.data);
         navigate('/');
       }
     } catch (error) {
@@ -56,6 +55,7 @@ const Login = ({ onLogin }) => {
       <GoogleLoginButton
         onSuccess={handleGoogleLoginSuccess}
         buttonText='Log in with Google'
+        axiosInstance={axiosInstance}
       />
     </div>
   );
