@@ -39,13 +39,13 @@ const HeaderMVP = ({ user, onLogout }) => {
               onClick={() => navigate('/join')}
               className='button join-button'
             >
-              Join Free
+              <b>Join Free</b>
             </button>
             <button
               onClick={() => navigate('/login')}
               className='button login-button'
             >
-              Log In
+              <b>Log In</b>
             </button>
           </>
         )}
