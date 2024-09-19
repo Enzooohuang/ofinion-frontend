@@ -77,7 +77,7 @@ function App() {
   const useMVP = true;
 
   return (
-    <GoogleOAuthProvider clientId='your-client-id'>
+    <GoogleOAuthProvider clientId='1030657402341-nqqo3nti4geuu29h01g4pr91l20dchqk.apps.googleusercontent.com'>
       <Router>
         {useMVP ? (
           <div className='App mvp-layout'>
