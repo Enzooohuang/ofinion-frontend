@@ -1,0 +1,140 @@
+/* Header styles */
+.header {
+  background-color: #ffffff;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-right: 1.5rem; /* Add this line to create margin on the right side */
+}
+
+.button {
+  padding: 0.75rem 1rem;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.join-button {
+  background-color: #6B3EF9;
+}
+
+.login-button {
+  background-color: #ffffff;
+  border: 1px solid #6B3EF9;
+  color: #6B3EF9;
+}
+
+.logout-button {
+  background-color: #f44336;
+}
+
+.welcome-message {
+  margin-right: 1rem;
+}
+
+/* You can add more global styles here */
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.box-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  width: 100%;
+  height: 100%;
+}
+
+.box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.main-content-mvp {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr) auto auto;
+  grid-template-areas:
+    "box1 box2"
+    "box3 box4"
+    "box5 box6"
+    "bottom bottom"
+    "footer footer";
+  width: 100%;
+}
+
+.bottom-box {
+  grid-area: bottom;
+  background-color: #E0E0E0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+
+footer {
+  grid-area: footer;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .main-content-mvp {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, auto) auto auto;
+    grid-template-areas:
+      "box1"
+      "box2"
+      "box3"
+      "box4"
+      "box5"
+      "box6"
+      "bottom"
+      "footer";
+  }
+}
+
+/* Add this media query for height */
+@media (max-height: 600px) { /* Adjust this value as needed */
+  .main-content-mvp {
+    height: auto;
+    min-height: calc(100vh - 60px);
+  }
+}

@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Header from './components/Header';
+import HeaderMVP from './components/HeaderMVP';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
+import MainContentMVP from './components/MainContentMVP'; // Add this import
 import StockDetail from './components/StockDetail';
 import EventDetail from './components/EventDetail';
 import JoinFree from './components/JoinFree';
 import Login from './components/Login';
 import axios from 'axios';
 import { getCsrfTokenFromCookie } from './utils/csrf';
+import './global.css'; // Import the global CSS file
+import Footer from './components/Footer'; // Add this import
 
 // Create a new axios instance with default config
 const axiosInstance = axios.create({
@@ -70,38 +74,23 @@ function App() {
     }
   };
 
+  const useMVP = true;
+
   return (
-    <GoogleOAuthProvider clientId='1030657402341-nqqo3nti4geuu29h01g4pr91l20dchqk.apps.googleusercontent.com'>
+    <GoogleOAuthProvider clientId='your-client-id'>
       <Router>
-        <div
-          className='App'
-          style={{ display: 'flex', height: '100vh' }}
-        >
-          <Sidebar
-            isCollapsed={isCollapsed}
-            setIsCollapsed={setIsCollapsed}
-          />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-              overflow: 'auto', // Changed from 'hidden' to 'auto'
-              width: isCollapsed ? 'calc(100% - 60px)' : 'calc(100% - 300px)',
-              transition: 'width 0.3s ease-in-out',
-            }}
-          >
-            <Header
+        {useMVP ? (
+          <div className='App mvp-layout'>
+            <HeaderMVP
               user={user}
               onLogout={handleLogout}
             />
             <div style={{ flexGrow: 1, overflow: 'auto' }}>
-              {' '}
               {/* Added this wrapper */}
               <Routes>
                 <Route
                   path='/'
-                  element={<MainContent />}
+                  element={<MainContentMVP />}
                 />
                 <Route
                   path='/stock/:symbol'
@@ -131,8 +120,70 @@ function App() {
                 />
               </Routes>
             </div>
+            <Footer />
           </div>
-        </div>
+        ) : (
+          <div
+            className='App'
+            style={{ display: 'flex', height: '100vh' }}
+          >
+            <Sidebar
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1,
+                overflow: 'auto', // Changed from 'hidden' to 'auto'
+                width: isCollapsed ? 'calc(100% - 60px)' : 'calc(100% - 300px)',
+                transition: 'width 0.3s ease-in-out',
+              }}
+            >
+              <Header
+                user={user}
+                onLogout={handleLogout}
+              />
+              <div style={{ flexGrow: 1, overflow: 'auto' }}>
+                {' '}
+                {/* Added this wrapper */}
+                <Routes>
+                  <Route
+                    path='/'
+                    element={<MainContent />}
+                  />
+                  <Route
+                    path='/stock/:symbol'
+                    element={<StockDetail />}
+                  />
+                  <Route
+                    path='/stock/:symbol/event'
+                    element={<EventDetail />}
+                  />
+                  <Route
+                    path='/join'
+                    element={
+                      <JoinFree
+                        onLogin={handleLogin}
+                        axiosInstance={axiosInstance}
+                      />
+                    }
+                  />
+                  <Route
+                    path='/login'
+                    element={
+                      <Login
+                        onLogin={handleLogin}
+                        axiosInstance={axiosInstance}
+                      />
+                    }
+                  />
+                </Routes>
+              </div>
+            </div>
+          </div>
+        )}
       </Router>
     </GoogleOAuthProvider>
   );

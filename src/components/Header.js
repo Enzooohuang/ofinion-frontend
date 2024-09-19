@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import logo from '../assets/logo.png'; // Make sure this path is correct
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ user, onLogout, useMVP }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isInputFocused, setIsInputFocused] = useState(false);
@@ -68,6 +69,9 @@ const Header = ({ user, onLogout }) => {
     }, 200);
   };
 
+  // Add this constant at the top of your component
+  const logoSize = 50; // Adjust this value to change the logo size
+
   return (
     <header
       style={{
@@ -79,148 +83,182 @@ const Header = ({ user, onLogout }) => {
         width: '100%', // Ensure the header takes full width
       }}
     >
-      {/* Remove the toggleSidebar button */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          width: '50%',
-          maxWidth: '500px',
-        }}
-      >
-        <div style={{ position: 'relative', width: '100%' }}>
-          <input
-            ref={inputRef}
-            type='text'
-            placeholder='Search stocks...'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
+      <div className='container mx-auto flex items-center justify-between'>
+        {!useMVP && (
+          <div
             style={{
-              padding: '0.5rem',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              width: '100%',
-            }}
-          />
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            style={{
-              position: 'absolute',
-              right: '0.25rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#888',
-              width: '1.2em',
-              height: '1.2em',
-              pointerEvents: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              width: '50%',
+              maxWidth: '500px',
             }}
           >
-            <circle
-              cx='11'
-              cy='11'
-              r='8'
-            ></circle>
-            <line
-              x1='21'
-              y1='21'
-              x2='16.65'
-              y2='16.65'
-            ></line>
-          </svg>
-        </div>
-        {isInputFocused && searchResults.length > 0 && (
-          <ul
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              backgroundColor: 'white',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              listStyle: 'none',
-              padding: 0,
-              margin: 0,
-              zIndex: 1000,
-              width: '100%',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            }}
-          >
-            {searchResults.map((result) => (
-              <li
-                key={result.symbol}
-                onMouseDown={() =>
-                  handleSelectStock(result.symbol, result.exchange, result.name)
-                }
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                ref={inputRef}
+                type='text'
+                placeholder='Search stocks...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
                 style={{
                   padding: '0.5rem',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  width: '100%',
                 }}
-                onMouseEnter={(e) =>
-                  (e.target.style.backgroundColor = '#f0f0f0')
-                }
-                onMouseLeave={(e) =>
-                  (e.target.style.backgroundColor = 'transparent')
-                }
+              />
+              <svg
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                style={{
+                  position: 'absolute',
+                  right: '0.25rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#888',
+                  width: '1.2em',
+                  height: '1.2em',
+                  pointerEvents: 'none',
+                }}
               >
-                {result.symbol} - {result.name}
-              </li>
-            ))}
-          </ul>
+                <circle
+                  cx='11'
+                  cy='11'
+                  r='8'
+                ></circle>
+                <line
+                  x1='21'
+                  y1='21'
+                  x2='16.65'
+                  y2='16.65'
+                ></line>
+              </svg>
+            </div>
+            {isInputFocused && searchResults.length > 0 && (
+              <ul
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: 'white',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
+                  zIndex: 1000,
+                  width: '100%',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                }}
+              >
+                {searchResults.map((result) => (
+                  <li
+                    key={result.symbol}
+                    onMouseDown={() =>
+                      handleSelectStock(
+                        result.symbol,
+                        result.exchange,
+                        result.name
+                      )
+                    }
+                    style={{
+                      padding: '0.5rem',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.backgroundColor = '#f0f0f0')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = 'transparent')
+                    }
+                  >
+                    {result.symbol} - {result.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
-      </div>
-      <div>
-        {user ? (
-          <>
-            <span>
-              Welcome, {user.email}, you have {user.times_remaining} times
-              remaining
-            </span>
-            <button
-              onClick={onLogout}
-              style={
-                {
-                  /* ... button styles ... */
-                }
-              }
-            >
-              Log Out
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => navigate('/join')}
-              style={
-                {
-                  /* ... button styles ... */
-                }
-              }
-            >
-              Join Free
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              style={
-                {
-                  /* ... button styles ... */
-                }
-              }
-            >
-              Log In
-            </button>
-          </>
+        {useMVP && (
+          <div style={{ flex: 1 }}>
+            <div className='flex items-center'>
+              <img
+                src={logo}
+                alt='Project JoJo Logo'
+                style={{
+                  height: `${logoSize}px`,
+                  width: 'auto',
+                  marginRight: '0.5rem',
+                }}
+              />
+            </div>
+          </div>
         )}
+        {/* Spacer when useMVP is true */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {user ? (
+            <>
+              <span>
+                Welcome, {user.email}
+                {user.times_remaining !== undefined && (
+                  <>, you have {user.times_remaining} times remaining</>
+                )}
+              </span>
+              <button
+                onClick={onLogout}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate('/join')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Join Free
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#2196F3',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Log In
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
