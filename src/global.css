@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-right: 1.5rem; /* Add this line to create margin on the right side */
+  margin-right: 1rem; /* Add this line to create margin on the right side */
 }
 
 .button {
@@ -84,6 +84,8 @@
 }
 
 .main-content-mvp {
+  max-width: 100%;
+  overflow-x: hidden;
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -137,4 +139,20 @@ footer {
     height: auto;
     min-height: calc(100vh - 60px);
   }
+}
+
+/* Add these new rules at the end of the file */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
