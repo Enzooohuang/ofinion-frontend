@@ -13,34 +13,23 @@ const Footer = () => {
     >
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
         <Link
-          to='/about'
-          style={{ color: 'inherit', textDecoration: 'none' }}
+          to='/terms' // Changed Trademark to Disclaimer
+          style={{
+            color: 'inherit',
+            textDecoration: 'none',
+          }}
         >
-          About
+          Terms
         </Link>
         <Link
-          to='/pricing' // Changed Privacy to Pricing
+          to='/Privacy'
           style={{ color: 'inherit', textDecoration: 'none' }}
         >
-          Pricing
-        </Link>
-        {/* Removed the line below */}
-        <Link
-          to='/disclaimer' // Changed Trademark to Disclaimer
-          style={{ color: 'inherit', textDecoration: 'none' }}
-        >
-          Disclaimer
-        </Link>
-        {/* Removed the line below */}
-        <Link
-          to='/contact'
-          style={{ color: 'inherit', textDecoration: 'none' }}
-        >
-          Contact
+          Privacy
         </Link>
       </div>
       <p style={{ marginTop: '1rem' }}>
-        &copy; 2023 Stock Analysis App. All rights reserved.
+        &copy; 2024 oFinion App. All rights reserved.
       </p>
     </footer>
   );

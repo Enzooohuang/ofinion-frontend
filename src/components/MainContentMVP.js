@@ -3,7 +3,7 @@ import Box1 from './Box1';
 import DisplayImage from './DisplayImage';
 import Box3 from './Box3';
 import Box4 from './Box4';
-import Box5 from './Box5';
+import SearchBoxSection from './SearchBoxSection';
 import Box6 from './Box6';
 import BottomBox from './BottomBox';
 
@@ -14,7 +14,7 @@ const MainContentMVP = () => {
       <DisplayImage />
       <Box3 />
       <Box4 />
-      <Box5 />
+      <SearchBoxSection />
       <Box6 />
       <BottomBox />
     </div>

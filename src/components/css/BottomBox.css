@@ -1,0 +1,115 @@
+.bottom-box {
+  background-image: url('../../assets/section.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px;
+}
+
+.bottom-box-left {
+  flex: 1;
+  padding-right: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-box-left h2 {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.4;
+  max-width: 80%;
+}
+
+.bottom-box-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-right: 40px;
+}
+
+.bottom-box-right input {
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid #ffffff;
+  font-size: 16px;
+  background-color: transparent;
+  color: #ffffff;
+  outline: none;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.bottom-box-right input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.bottom-box-right input:focus {
+  border-bottom-color: #6B3EF9;
+}
+
+@media (max-width: 768px) {
+  .bottom-box {
+    flex-direction: column;
+    padding: 30px;
+  }
+
+  .bottom-box-left,
+  .bottom-box-right {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .bottom-box-left h2 {
+    text-align: center;
+    font-size: 24px;
+  }
+
+  .bottom-box-right {
+    align-items: center;
+  }
+
+  .bottom-box-right input {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+.email-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.email-input-container input {
+  flex-grow: 1;
+  padding-right: 40px; /* Make room for the button */
+}
+
+.submit-button {
+  position: absolute;
+  right: 0;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px;
+  transition: color 0.3s ease;
+}
+
+.submit-button:hover {
+  color: #6B3EF9;
+}
+
+.email-input-container input.error {
+  border-bottom-color: #ff0000; /* Red color for error state */
+}
