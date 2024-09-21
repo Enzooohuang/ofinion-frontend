@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './css/AIConversation.css';
 import defaultUserImage from '../assets/defaultimage.jpg';
-import defaultAIImage from '../assets/defaultimage.jpg';
+import defaultAIImage from '../assets/smalllogo.png';
 
 // Add this import at the top of your file
 import { FaPaperPlane } from 'react-icons/fa';
@@ -166,7 +166,7 @@ const AIConversation = ({ transcript, company_symbol, year, quarter }) => {
                 <img
                   src={defaultAIImage}
                   alt='AI'
-                  className='profile-image'
+                  className='profile-image ai'
                 />
               )}
               <div className={`message ${message.sender}`}>
