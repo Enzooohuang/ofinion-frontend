@@ -93,7 +93,7 @@ function App() {
                 />
                 <Route
                   path='/stock/:symbol/event'
-                  element={<EventDetail />}
+                  element={<EventDetail axiosInstance={axiosInstance} />}
                 />
                 <Route
                   path='/join'

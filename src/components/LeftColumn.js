@@ -19,7 +19,16 @@ const ChevronIcon = ({ isOpen }) => (
   </svg>
 );
 
-const LeftColumn = ({ transcriptData, company_symbol, year, quarter }) => {
+const LeftColumn = ({
+  transcriptData,
+  company_symbol,
+  year,
+  quarter,
+  name,
+  conferenceDate,
+  exchange,
+  axiosInstance,
+}) => {
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
 
   const togglePanel = () => {
@@ -40,7 +49,7 @@ const LeftColumn = ({ transcriptData, company_symbol, year, quarter }) => {
         </div>
         <div className={`panel searches ${!isTranscriptOpen ? 'open' : ''}`}>
           <h3 onClick={() => togglePanel()}>
-            Popular & Historical Smart Searches
+            Smart Searches
             <ChevronIcon isOpen={!isTranscriptOpen} />
           </h3>
           <div className='panel-content'>
@@ -54,6 +63,10 @@ const LeftColumn = ({ transcriptData, company_symbol, year, quarter }) => {
           company_symbol={company_symbol}
           year={year}
           quarter={quarter}
+          name={name}
+          conferenceDate={conferenceDate}
+          exchange={exchange}
+          axiosInstance={axiosInstance}
         />
       </div>
     </div>

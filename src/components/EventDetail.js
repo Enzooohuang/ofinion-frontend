@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SearchBox from './SearchBox';
@@ -6,7 +6,8 @@ import LeftColumn from './LeftColumn';
 import RightColumn from './RightColumn';
 import './css/EventDetail.css';
 
-const EventDetail = () => {
+const EventDetail = ({ axiosInstance }) => {
+  const ref = useRef(null);
   const location = useLocation();
   const { year, quarter, conferenceDate, symbol, exchange, name } =
     location.state || {};
@@ -17,8 +18,10 @@ const EventDetail = () => {
 
   useEffect(() => {
     const fetchTranscriptData = async () => {
+      if (ref.current) return; // If we've already fetched, don't fetch again
+      ref.current = true;
       try {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
           'http://localhost:8000/api/stock-data/',
           {
             exchange,
@@ -40,7 +43,7 @@ const EventDetail = () => {
     if (exchange && symbol && year && quarter) {
       fetchTranscriptData();
     }
-  }, [exchange, symbol, year, quarter]);
+  }, [exchange, symbol, year, quarter, name, conferenceDate, axiosInstance]);
 
   const handleSearch = async (e) => {
     // ... existing handleSearch function ...
@@ -57,12 +60,20 @@ const EventDetail = () => {
           company_symbol={symbol}
           year={year}
           quarter={quarter}
+          name={name}
+          conferenceDate={conferenceDate}
+          exchange={exchange}
+          axiosInstance={axiosInstance}
         />
         <RightColumn
           transcriptData={transcriptData}
-          searchKeyword={searchKeyword}
-          handleSearch={handleSearch}
-          searchResults={searchResults}
+          company_symbol={symbol}
+          year={year}
+          quarter={quarter}
+          name={name}
+          conferenceDate={conferenceDate}
+          exchange={exchange}
+          axiosInstance={axiosInstance}
         />
       </main>
     </div>

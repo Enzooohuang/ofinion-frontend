@@ -15,7 +15,16 @@ const LoadingIndicator = () => (
   </div>
 );
 
-const AIConversation = ({ transcript, company_symbol, year, quarter }) => {
+const AIConversation = ({
+  transcript,
+  company_symbol,
+  year,
+  quarter,
+  name,
+  conferenceDate,
+  exchange,
+  axiosInstance,
+}) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [expertQuestions, setExpertQuestions] = useState([]);
@@ -38,17 +47,28 @@ const AIConversation = ({ transcript, company_symbol, year, quarter }) => {
 
   useEffect(() => {
     const fetchExpertQuestions = async () => {
-      if (!transcript || !company_symbol || !year || !quarter) {
+      if (
+        !transcript ||
+        !company_symbol ||
+        !year ||
+        !quarter ||
+        !name ||
+        !conferenceDate ||
+        !exchange
+      ) {
         return;
       }
       try {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
           'http://localhost:8000/api/generate-expert-questions/',
           {
             transcript,
             company_symbol,
             year,
             quarter,
+            name,
+            conference_date: conferenceDate,
+            exchange,
           }
         );
         setExpertQuestions(response.data.expert_questions);
@@ -59,7 +79,17 @@ const AIConversation = ({ transcript, company_symbol, year, quarter }) => {
     if (messages.length === 0) {
       fetchExpertQuestions();
     }
-  }, [messages, transcript, company_symbol, year, quarter]);
+  }, [
+    messages,
+    transcript,
+    company_symbol,
+    year,
+    quarter,
+    name,
+    conferenceDate,
+    exchange,
+    axiosInstance,
+  ]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -142,6 +172,7 @@ const AIConversation = ({ transcript, company_symbol, year, quarter }) => {
     <div className='ai-conversation'>
       {messages.length === 0 ? (
         <div className='expert-questions'>
+          <h2 className='ask-ai-text'>Ask AI anything about this event...</h2>
           {expertQuestions.map((question, index) => (
             <button
               key={index}
