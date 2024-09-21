@@ -5,8 +5,7 @@ import Header from './components/Header';
 import HeaderMVP from './components/HeaderMVP';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
-import MainContentMVP from './components/MainContentMVP'; // Add this import
-import StockDetail from './components/StockDetail';
+import MainContentMVP from './components/MainContentMVP';
 import EventDetail from './components/EventDetail';
 import JoinFree from './components/JoinFree';
 import Login from './components/Login';
@@ -93,10 +92,6 @@ function App() {
                   element={<MainContentMVP />}
                 />
                 <Route
-                  path='/stock/:symbol'
-                  element={<StockDetail />}
-                />
-                <Route
                   path='/stock/:symbol/event'
                   element={<EventDetail />}
                 />
@@ -152,10 +147,6 @@ function App() {
                   <Route
                     path='/'
                     element={<MainContent />}
-                  />
-                  <Route
-                    path='/stock/:symbol'
-                    element={<StockDetail />}
                   />
                   <Route
                     path='/stock/:symbol/event'

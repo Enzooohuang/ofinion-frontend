@@ -10,6 +10,8 @@ const SearchBoxSection = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
@@ -26,6 +28,31 @@ const SearchBoxSection = () => {
     };
     fetchCompanies();
   }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      if (selectedCompany) {
+        try {
+          const response = await axios.post(
+            'http://localhost:8000/api/company-events/',
+            {
+              exchange: selectedCompany.exchange,
+              symbol: selectedCompany.symbol,
+            }
+          );
+          // Add id to each event
+          const eventsWithId = response.data.events.map((event, index) => ({
+            ...event,
+            id: index,
+          }));
+          setEvents(eventsWithId);
+        } catch (error) {
+          console.error('Error fetching events:', error);
+        }
+      }
+    };
+    fetchEvents();
+  }, [selectedCompany]);
 
   // Search function wrapped in useCallback
   const searchCompanies = useCallback(
@@ -61,6 +88,7 @@ const SearchBoxSection = () => {
   const handleDeleteToken = () => {
     setSelectedCompany(null);
     setSearchTerm('');
+    setEvents([]);
   };
 
   const handleInputFocus = () => {
@@ -74,6 +102,24 @@ const SearchBoxSection = () => {
     setTimeout(() => {
       setIsInputFocused(false);
     }, 200);
+  };
+
+  const handleEventChange = (e) => {
+    const eventId = e.target.value;
+    setSelectedEvent(events[eventId]);
+  };
+
+  const handleSearchClick = () => {
+    navigate(`/stock/${selectedCompany.symbol}/event`, {
+      state: {
+        year: selectedEvent.year,
+        quarter: selectedEvent.quarter,
+        conferenceDate: selectedEvent.conference_date,
+        symbol: selectedCompany.symbol,
+        exchange: selectedCompany.exchange,
+        name: selectedCompany.name,
+      },
+    });
   };
 
   return (
@@ -126,13 +172,25 @@ const SearchBoxSection = () => {
         <select
           className='dropdown'
           disabled={!selectedCompany}
+          onChange={handleEventChange}
         >
-          <option value=''>Choose quarter</option>
-          <option value='option1'>Option 1</option>
-          <option value='option2'>Option 2</option>
-          <option value='option3'>Option 3</option>
+          <option value=''>Choose event</option>
+          {events.map((event, index) => (
+            <option
+              key={index}
+              value={event.id}
+            >
+              {event.year} Q{event.quarter}
+            </option>
+          ))}
         </select>
-        <button className='search-button'>Search</button>
+        <button
+          className='search-button'
+          onClick={handleSearchClick}
+          disabled={!selectedEvent}
+        >
+          Search
+        </button>
       </div>
     </div>
   );

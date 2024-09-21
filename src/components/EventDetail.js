@@ -96,10 +96,10 @@ const EventDetail = () => {
       <p>Conference Date: {new Date(conferenceDate).toLocaleString()}</p>
 
       <Link
-        to={`/stock/${symbol}`}
+        to={`/`}
         state={{ exchange, name }}
       >
-        Back to Stock Details
+        Back
       </Link>
 
       {errorMessage && (
