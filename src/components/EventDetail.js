@@ -13,6 +13,7 @@ const EventDetail = ({ axiosInstance }) => {
     location.state || {};
   const [errorMessage, setErrorMessage] = useState(null);
   const [transcriptData, setTranscriptData] = useState(null);
+  const [advancedTranscriptData, setAdvancedTranscriptData] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
@@ -32,6 +33,17 @@ const EventDetail = ({ axiosInstance }) => {
           }
         );
         setTranscriptData(response.data);
+        const responseAdvanced = await axiosInstance.post(
+          'http://localhost:8000/api/stock-data/',
+          {
+            exchange,
+            symbol,
+            year,
+            quarter,
+            level: 2,
+          }
+        );
+        setAdvancedTranscriptData(responseAdvanced.data);
       } catch (error) {
         console.error('Error fetching transcript data:', error);
         setErrorMessage(
@@ -67,6 +79,7 @@ const EventDetail = ({ axiosInstance }) => {
         />
         <RightColumn
           transcriptData={transcriptData}
+          advancedTranscriptData={advancedTranscriptData}
           company_symbol={symbol}
           year={year}
           quarter={quarter}
