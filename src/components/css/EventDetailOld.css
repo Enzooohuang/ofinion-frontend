@@ -1,0 +1,15 @@
+.event-detail {
+  padding: 20px;
+}
+
+.search-box-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+/* You might need to adjust the width of the SearchBox for this view */
+.search-box-container .search-container {
+  width: 70%;
+  max-width: 800px;
+}

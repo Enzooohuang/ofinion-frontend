@@ -1,0 +1,51 @@
+.right-column {
+  width: 75%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.right-column h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.right-column form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.right-column input[type="text"] {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+}
+
+.right-column button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #6b3ef9;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.right-column button:hover {
+  background-color: #5a2ee0;
+}
+
+.transcript-content {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .right-column {
+    width: 100%;
+  }
+}
