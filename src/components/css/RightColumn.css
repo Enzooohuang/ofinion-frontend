@@ -303,3 +303,22 @@
   color: #333;
   line-height: 1.4;
 }
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  font-style: italic;
+  color: #888;
+}
+
+.summary-row.summary .loading-indicator,
+.summary-col .loading-indicator {
+  height: 50px;
+}
+
+.qa-pairs-section .loading-indicator,
+.transcript-section .loading-indicator {
+  height: 100px;
+}

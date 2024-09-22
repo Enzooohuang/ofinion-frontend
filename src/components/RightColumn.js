@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './css/RightColumn.css'; // We'll create this CSS file
+import './css/RightColumn.css';
 import { ChevronIcon } from './LeftColumn';
+
 const RightColumn = ({
   transcriptData,
-  advancedTranscriptData,
   company_symbol,
   year,
   quarter,
@@ -18,12 +18,18 @@ const RightColumn = ({
   const [negativePoints, setNegativePoints] = useState([]);
   const [futureGuidance, setFutureGuidance] = useState([]);
   const [qaPairs, setQaPairs] = useState([]);
+  const [advancedTranscriptData, setAdvancedTranscriptData] = useState([]);
   const [expandedQuestions, setExpandedQuestions] = useState({});
+  const [loading, setLoading] = useState({
+    summary: true,
+    points: true,
+    qaPairs: true,
+    transcript: true,
+  });
 
   useEffect(() => {
-    console.log(transcriptData);
-    console.log(advancedTranscriptData);
     const analyzeTranscript = async () => {
+      setLoading((prev) => ({ ...prev, summary: true, points: true }));
       try {
         const response = await axiosInstance.post(
           'http://localhost:8000/api/analyze-transcript/',
@@ -63,10 +69,13 @@ const RightColumn = ({
         setFutureGuidance(parseStringList(data.future_guidance));
       } catch (error) {
         console.error('Error analyzing transcript:', error);
+      } finally {
+        setLoading((prev) => ({ ...prev, summary: false, points: false }));
       }
     };
 
     const fetchQaPairs = async () => {
+      setLoading((prev) => ({ ...prev, qaPairs: true }));
       try {
         const response = await axiosInstance.post(
           'http://localhost:8000/api/paraphrase-qa/',
@@ -84,12 +93,37 @@ const RightColumn = ({
         setQaPairs(response.data.qa_pairs);
       } catch (error) {
         console.error('Error fetching QA pairs:', error);
+      } finally {
+        setLoading((prev) => ({ ...prev, qaPairs: false }));
+      }
+    };
+
+    const fetchAdvancedTranscript = async () => {
+      setLoading((prev) => ({ ...prev, transcript: true }));
+      try {
+        const responseAdvanced = await axiosInstance.post(
+          'http://localhost:8000/api/stock-data/',
+          {
+            exchange,
+            symbol: company_symbol,
+            year,
+            quarter,
+            level: 2,
+          }
+        );
+        console.log(responseAdvanced.data.speakers);
+        setAdvancedTranscriptData(responseAdvanced.data.speakers);
+      } catch (error) {
+        console.error('Error fetching advanced transcript:', error);
+      } finally {
+        setLoading((prev) => ({ ...prev, transcript: false }));
       }
     };
 
     if (transcriptData) {
       analyzeTranscript();
       fetchQaPairs();
+      fetchAdvancedTranscript();
     }
   }, [
     transcriptData,
@@ -100,8 +134,13 @@ const RightColumn = ({
     name,
     conferenceDate,
     axiosInstance,
-    advancedTranscriptData,
   ]);
+
+  useEffect(() => {
+    if (advancedTranscriptData) {
+      setLoading((prev) => ({ ...prev, transcript: false }));
+    }
+  }, [advancedTranscriptData]);
 
   const toggleQuestion = (index) => {
     setExpandedQuestions((prev) => ({
@@ -200,102 +239,101 @@ const RightColumn = ({
             <div className='summary-section'>
               <div className='summary-row summary'>
                 <h3>Summary</h3>
-                <p>{summary}</p>
+                {loading.summary ? (
+                  <div className='loading-indicator'>Loading summary...</div>
+                ) : (
+                  <p>{summary}</p>
+                )}
               </div>
               <div className='summary-row'>
-                <div className='summary-col positive'>
-                  <h4>Positive Points</h4>
-                  <ul>
-                    {positivePoints.map((point, index) => (
-                      <li key={index}>
-                        • {point.point}
-                        <span
-                          className='reference'
-                          onClick={() =>
-                            console.log('Positive reference:', point.reference)
-                          }
-                          style={{ cursor: 'pointer' }}
-                        >
-                          [{index + 1}]
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className='summary-col negative'>
-                  <h4>Negative Points</h4>
-                  <ul>
-                    {negativePoints.map((point, index) => (
-                      <li key={index}>
-                        • {point.point}{' '}
-                        <span
-                          className='reference'
-                          onClick={() =>
-                            console.log('Negative reference:', point.reference)
-                          }
-                          style={{ cursor: 'pointer' }}
-                        >
-                          [{index + 1}]
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className='summary-col outlook'>
-                  <h4>Future Guidance</h4>
-                  <ul>
-                    {futureGuidance.map((point, index) => (
-                      <li key={index}>
-                        • {point.guidance}{' '}
-                        <span
-                          className='reference'
-                          onClick={() =>
-                            console.log('Guidance reference:', point.reference)
-                          }
-                          style={{ cursor: 'pointer' }}
-                        >
-                          [{index + 1}]
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {['positive', 'negative', 'outlook'].map((type, index) => (
+                  <div
+                    key={index}
+                    className={`summary-col ${type}`}
+                  >
+                    <h4>
+                      {type === 'outlook'
+                        ? 'Future Guidance'
+                        : `${
+                            type.charAt(0).toUpperCase() + type.slice(1)
+                          } Points`}
+                    </h4>
+                    {loading.points ? (
+                      <div className='loading-indicator'>
+                        Loading {type} points...
+                      </div>
+                    ) : (
+                      <ul>
+                        {(type === 'positive'
+                          ? positivePoints
+                          : type === 'negative'
+                          ? negativePoints
+                          : futureGuidance
+                        ).map((point, idx) => (
+                          <li key={idx}>
+                            • {point.point || point.guidance}
+                            <span
+                              className='reference'
+                              onClick={() =>
+                                console.log(
+                                  `${type} reference:`,
+                                  point.reference
+                                )
+                              }
+                            >
+                              [{idx + 1}]
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
             <div className='qa-pairs-section'>
               <h3>Q&A Highlights</h3>
-              {qaPairs.map((pair, index) => (
-                <div key={index}>
-                  <p
-                    className='question'
-                    onClick={() => toggleQuestion(index)}
-                  >
-                    <span className='question-text'>
-                      <strong>Q:</strong> {pair.objective_question}
-                    </span>
-                    <span className='toggle-icon'>
-                      <ChevronIcon isOpen={expandedQuestions[index]} />
-                    </span>
-                  </p>
-                  {expandedQuestions[index] && (
-                    <p className='answer'>
-                      <strong>A:</strong> {pair.comprehensive_answer}
+              {loading.qaPairs ? (
+                <div className='loading-indicator'>Loading Q&A pairs...</div>
+              ) : (
+                qaPairs.map((pair, index) => (
+                  <div key={index}>
+                    <p
+                      className='question'
+                      onClick={() => toggleQuestion(index)}
+                    >
+                      <span className='question-text'>
+                        <strong>Q:</strong> {pair.objective_question}
+                      </span>
+                      <span className='toggle-icon'>
+                        <ChevronIcon isOpen={expandedQuestions[index]} />
+                      </span>
                     </p>
-                  )}
-                </div>
-              ))}
+                    {expandedQuestions[index] && (
+                      <p className='answer'>
+                        <strong>A:</strong> {pair.comprehensive_answer}
+                      </p>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
             <div className='transcript-section'>
               <h3>Transcript</h3>
-              {advancedTranscriptData.map((item, index) => (
-                <div
-                  key={index}
-                  className='transcript-item'
-                >
-                  <p className='speaker-name'>{item.name}</p>
-                  <p className='speaker-text'>{item.text}</p>
-                </div>
-              ))}
+              {loading.transcript ? (
+                <div className='loading-indicator'>Loading transcript...</div>
+              ) : (
+                advancedTranscriptData &&
+                advancedTranscriptData.map((item, index) => (
+                  <div
+                    key={index}
+                    className='transcript-item'
+                  >
+                    <p className='speaker-name'>{item.name}</p>
+                    <p className='speaker-text'>{item.text}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
