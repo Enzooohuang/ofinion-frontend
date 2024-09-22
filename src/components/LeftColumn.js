@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './css/LeftColumn.css';
 import AIConversation from './AIConversation';
 
-const ChevronIcon = ({ isOpen }) => (
+export const ChevronIcon = ({ isOpen }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='16'

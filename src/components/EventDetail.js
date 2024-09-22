@@ -43,7 +43,8 @@ const EventDetail = ({ axiosInstance }) => {
             level: 2,
           }
         );
-        setAdvancedTranscriptData(responseAdvanced.data);
+        console.log(responseAdvanced.data.speakers);
+        setAdvancedTranscriptData(responseAdvanced.data.speakers);
       } catch (error) {
         console.error('Error fetching transcript data:', error);
         setErrorMessage(

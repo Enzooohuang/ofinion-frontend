@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import AIConversation from './AIConversation';
 import './css/RightColumn.css'; // We'll create this CSS file
-
+import { ChevronIcon } from './LeftColumn';
 const RightColumn = ({
   transcriptData,
   advancedTranscriptData,
@@ -18,8 +17,12 @@ const RightColumn = ({
   const [positivePoints, setPositivePoints] = useState([]);
   const [negativePoints, setNegativePoints] = useState([]);
   const [futureGuidance, setFutureGuidance] = useState([]);
+  const [qaPairs, setQaPairs] = useState([]);
+  const [expandedQuestions, setExpandedQuestions] = useState({});
 
   useEffect(() => {
+    console.log(transcriptData);
+    console.log(advancedTranscriptData);
     const analyzeTranscript = async () => {
       try {
         const response = await axiosInstance.post(
@@ -43,7 +46,6 @@ const RightColumn = ({
         const parseStringList = (str) => {
           if (typeof str === 'string') {
             try {
-              // Replace single quotes with double quotes, except within the text content
               const jsonStr = str
                 .replace(/(?<=\{|,)\s*'\s*(\w+)\s*'\s*:/g, '"$1":')
                 .replace(/:\s*'([^']*)'/g, ':"$1"');
@@ -53,7 +55,7 @@ const RightColumn = ({
               return [];
             }
           }
-          return str || []; // If it's not a string, return as is or an empty array
+          return str || [];
         };
 
         setPositivePoints(parseStringList(data.positive_points));
@@ -64,8 +66,30 @@ const RightColumn = ({
       }
     };
 
+    const fetchQaPairs = async () => {
+      try {
+        const response = await axiosInstance.post(
+          'http://localhost:8000/api/paraphrase-qa/',
+          {
+            exchange: exchange.toUpperCase(),
+            transcript: transcriptData,
+            company_symbol,
+            year,
+            quarter,
+            name,
+            conference_date: conferenceDate,
+          }
+        );
+        console.log(response.data);
+        setQaPairs(response.data.qa_pairs);
+      } catch (error) {
+        console.error('Error fetching QA pairs:', error);
+      }
+    };
+
     if (transcriptData) {
       analyzeTranscript();
+      fetchQaPairs();
     }
   }, [
     transcriptData,
@@ -76,7 +100,15 @@ const RightColumn = ({
     name,
     conferenceDate,
     axiosInstance,
+    advancedTranscriptData,
   ]);
+
+  const toggleQuestion = (index) => {
+    setExpandedQuestions((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   // Function to format the date
   const formatDate = (dateString) => {
@@ -164,69 +196,106 @@ const RightColumn = ({
           {/* Content for the left section (25% width) */}
         </div>
         <div className='right-section'>
-          <div className='summary-section'>
-            <div className='summary-row summary'>
-              <h3>Summary</h3>
-              <p>{summary}</p>
+          <div className='scrollable-content'>
+            <div className='summary-section'>
+              <div className='summary-row summary'>
+                <h3>Summary</h3>
+                <p>{summary}</p>
+              </div>
+              <div className='summary-row'>
+                <div className='summary-col positive'>
+                  <h4>Positive Points</h4>
+                  <ul>
+                    {positivePoints.map((point, index) => (
+                      <li key={index}>
+                        • {point.point}
+                        <span
+                          className='reference'
+                          onClick={() =>
+                            console.log('Positive reference:', point.reference)
+                          }
+                          style={{ cursor: 'pointer' }}
+                        >
+                          [{index + 1}]
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className='summary-col negative'>
+                  <h4>Negative Points</h4>
+                  <ul>
+                    {negativePoints.map((point, index) => (
+                      <li key={index}>
+                        • {point.point}{' '}
+                        <span
+                          className='reference'
+                          onClick={() =>
+                            console.log('Negative reference:', point.reference)
+                          }
+                          style={{ cursor: 'pointer' }}
+                        >
+                          [{index + 1}]
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className='summary-col outlook'>
+                  <h4>Future Guidance</h4>
+                  <ul>
+                    {futureGuidance.map((point, index) => (
+                      <li key={index}>
+                        • {point.guidance}{' '}
+                        <span
+                          className='reference'
+                          onClick={() =>
+                            console.log('Guidance reference:', point.reference)
+                          }
+                          style={{ cursor: 'pointer' }}
+                        >
+                          [{index + 1}]
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div className='summary-row'>
-              <div className='summary-col positive'>
-                <h4>Positive Points</h4>
-                <ul>
-                  {positivePoints.map((point, index) => (
-                    <li key={index}>
-                      • {point.point}
-                      <span
-                        className='reference'
-                        onClick={() =>
-                          console.log('Positive reference:', point.reference)
-                        }
-                        style={{ cursor: 'pointer' }}
-                      >
-                        [{index + 1}]
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className='summary-col negative'>
-                <h4>Negative Points</h4>
-                <ul>
-                  {negativePoints.map((point, index) => (
-                    <li key={index}>
-                      • {point.point}{' '}
-                      <span
-                        className='reference'
-                        onClick={() =>
-                          console.log('Negative reference:', point.reference)
-                        }
-                        style={{ cursor: 'pointer' }}
-                      >
-                        [{index + 1}]
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className='summary-col outlook'>
-                <h4>Future Guidance</h4>
-                <ul>
-                  {futureGuidance.map((point, index) => (
-                    <li key={index}>
-                      • {point.guidance}{' '}
-                      <span
-                        className='reference'
-                        onClick={() =>
-                          console.log('Guidance reference:', point.reference)
-                        }
-                        style={{ cursor: 'pointer' }}
-                      >
-                        [{index + 1}]
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className='qa-pairs-section'>
+              <h3>Q&A Highlights</h3>
+              {qaPairs.map((pair, index) => (
+                <div key={index}>
+                  <p
+                    className='question'
+                    onClick={() => toggleQuestion(index)}
+                  >
+                    <span className='question-text'>
+                      <strong>Q:</strong> {pair.objective_question}
+                    </span>
+                    <span className='toggle-icon'>
+                      <ChevronIcon isOpen={expandedQuestions[index]} />
+                    </span>
+                  </p>
+                  {expandedQuestions[index] && (
+                    <p className='answer'>
+                      <strong>A:</strong> {pair.comprehensive_answer}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className='transcript-section'>
+              <h3>Transcript</h3>
+              {advancedTranscriptData.map((item, index) => (
+                <div
+                  key={index}
+                  className='transcript-item'
+                >
+                  <p className='speaker-name'>{item.name}</p>
+                  <p className='speaker-text'>{item.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
