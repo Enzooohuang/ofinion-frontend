@@ -92,7 +92,7 @@ function App() {
                   element={<MainContentMVP />}
                 />
                 <Route
-                  path='/stock/:symbol/event'
+                  path='/stock/:symbol/:id'
                   element={<EventDetail axiosInstance={axiosInstance} />}
                 />
                 <Route

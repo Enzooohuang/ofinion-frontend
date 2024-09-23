@@ -24,6 +24,7 @@ const AIConversation = ({
   conferenceDate,
   exchange,
   axiosInstance,
+  setReference,
 }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -165,6 +166,7 @@ const AIConversation = ({
   };
 
   const handleReferenceClick = (reference) => {
+    setReference(reference);
     console.log('Reference clicked:', reference);
   };
 

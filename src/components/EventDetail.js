@@ -1,78 +1,91 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import SearchBox from './SearchBox';
 import LeftColumn from './LeftColumn';
 import RightColumn from './RightColumn';
 import './css/EventDetail.css';
 
 const EventDetail = ({ axiosInstance }) => {
-  const ref = useRef(null);
   const location = useLocation();
   const { year, quarter, conferenceDate, symbol, exchange, name } =
     location.state || {};
-  const [errorMessage, setErrorMessage] = useState(null);
   const [transcriptData, setTranscriptData] = useState(null);
+  const [reference, setReference] = useState(null);
+  const [eventDetails, setEventDetails] = useState({
+    exchange: exchange,
+    symbol: symbol,
+    year: year,
+    quarter: quarter,
+    name: name,
+    conferenceDate: conferenceDate,
+  });
 
   useEffect(() => {
     const fetchTranscriptData = async () => {
-      if (ref.current) return; // If we've already fetched, don't fetch again
-      ref.current = true;
       try {
         const response = await axiosInstance.post(
           'http://localhost:8000/api/stock-data/',
           {
-            exchange,
-            symbol,
-            year,
-            quarter,
+            exchange: eventDetails.exchange,
+            symbol: eventDetails.symbol,
+            year: eventDetails.year,
+            quarter: eventDetails.quarter,
             level: 1,
           }
         );
         setTranscriptData(response.data);
       } catch (error) {
         console.error('Error fetching transcript data:', error);
-        setErrorMessage(
-          'An error occurred while fetching the transcript data.'
-        );
       }
     };
 
-    if (exchange && symbol && year && quarter) {
+    if (
+      eventDetails.exchange &&
+      eventDetails.symbol &&
+      eventDetails.year &&
+      eventDetails.quarter
+    ) {
       fetchTranscriptData();
     }
-  }, [exchange, symbol, year, quarter, name, conferenceDate, axiosInstance]);
+  }, [eventDetails, axiosInstance]);
 
-  const handleSearch = async (e) => {
-    // ... existing handleSearch function ...
+  const handleSearch = (searchParams) => {
+    // Reset transcriptData to trigger a reload of AIConversation
+    setTranscriptData(null);
+    setEventDetails(searchParams);
   };
 
   return (
     <div className='event-detail-container'>
       <header className='event-detail-header'>
-        <SearchBox />
+        <SearchBox onSearch={handleSearch} />
       </header>
       <main className='event-detail-main'>
         <LeftColumn
           transcriptData={transcriptData}
-          company_symbol={symbol}
-          year={year}
-          quarter={quarter}
-          name={name}
-          conferenceDate={conferenceDate}
-          exchange={exchange}
+          company_symbol={eventDetails.symbol}
+          year={eventDetails.year}
+          quarter={eventDetails.quarter}
+          name={eventDetails.name}
+          conferenceDate={eventDetails.conferenceDate}
+          exchange={eventDetails.exchange}
           axiosInstance={axiosInstance}
+          key={`${eventDetails.symbol}-${eventDetails.year}-${eventDetails.quarter}`} // Add this line
+          setReference={setReference}
         />
-        <RightColumn
-          transcriptData={transcriptData}
-          company_symbol={symbol}
-          year={year}
-          quarter={quarter}
-          name={name}
-          conferenceDate={conferenceDate}
-          exchange={exchange}
-          axiosInstance={axiosInstance}
-        />
+        {eventDetails && (
+          <RightColumn
+            transcriptData={transcriptData}
+            company_symbol={eventDetails.symbol}
+            year={eventDetails.year}
+            quarter={eventDetails.quarter}
+            name={eventDetails.name}
+            conferenceDate={eventDetails.conferenceDate}
+            exchange={eventDetails.exchange}
+            axiosInstance={axiosInstance}
+            reference={reference}
+          />
+        )}
       </main>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './css/RightColumn.css';
 import { ChevronIcon } from './LeftColumn';
 
@@ -11,6 +11,7 @@ const RightColumn = ({
   conferenceDate,
   exchange,
   axiosInstance,
+  reference,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [summary, setSummary] = useState('');
@@ -20,12 +21,106 @@ const RightColumn = ({
   const [qaPairs, setQaPairs] = useState([]);
   const [advancedTranscriptData, setAdvancedTranscriptData] = useState([]);
   const [expandedQuestions, setExpandedQuestions] = useState({});
+  const [positiveSentiments, setPositiveSentiments] = useState([]);
+  const [negativeSentiments, setNegativeSentiments] = useState([]);
   const [loading, setLoading] = useState({
     summary: true,
     points: true,
     qaPairs: true,
     transcript: true,
   });
+  const transcriptRef = useRef(null);
+
+  const should_mark_positive = true;
+  const should_mark_negative = true;
+
+  const findSentenceSpan = (element, searchText) => {
+    const spans = element.querySelectorAll('span[data-sentence]');
+    for (const span of spans) {
+      const spanText = span.getAttribute('data-sentence');
+      if (
+        spanText.toLowerCase().includes(searchText.toLowerCase()) ||
+        searchText.toLowerCase().includes(spanText.toLowerCase())
+      ) {
+        return span;
+      }
+    }
+    return null;
+  };
+
+  const highlightSentiment = (text) => {
+    if (!positiveSentiments || !negativeSentiments) {
+      return text;
+    }
+    if (!positiveSentiments.length && !negativeSentiments.length) return text;
+
+    let highlightedText = text;
+    const sentiments = [...positiveSentiments, ...negativeSentiments];
+    sentiments.sort((a, b) => b.sentence.length - a.sentence.length);
+
+    sentiments.forEach((sentiment) => {
+      const { sentence, score } = sentiment;
+      const isPositive = positiveSentiments.includes(sentiment);
+      const color = isPositive
+        ? `rgba(0, 128, 0, ${Math.min(Math.abs(score) * 0.1, 1.0)})`
+        : `rgba(255, 0, 0, ${Math.min(Math.abs(score) * 0.1, 1.0)})`;
+
+      let trimmedSentence = sentence.trim();
+      if (trimmedSentence.endsWith('.')) {
+        trimmedSentence = trimmedSentence.slice(0, -1);
+      }
+
+      let matchedSpan = findSentenceSpan(
+        transcriptRef.current,
+        trimmedSentence
+      );
+      if (matchedSpan) {
+        matchedSpan.style.borderBottom = `2px solid ${color}`;
+      }
+    });
+
+    return highlightedText;
+  };
+
+  const handleReferenceClick = (reference) => {
+    // Split the reference into sentences
+    const sentenceRegex = /([.!?])\s+(?=[A-Z])/g;
+    const referenceSentences = reference.split(sentenceRegex) || [reference];
+
+    let matchedSpan = null;
+
+    for (const sentence of referenceSentences) {
+      let trimmedSentence = sentence.trim();
+      if (trimmedSentence.endsWith('.')) {
+        trimmedSentence = trimmedSentence.slice(0, -1);
+      }
+
+      matchedSpan = findSentenceSpan(transcriptRef.current, trimmedSentence);
+    }
+
+    if (matchedSpan) {
+      matchedSpan.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      console.log('Scrolling to element');
+
+      // Highlight the matched span
+      matchedSpan.classList.add('highlighted-sentence');
+      setTimeout(() => {
+        matchedSpan.classList.remove('highlighted-sentence');
+      }, 3000); // Remove highlight after 3 seconds
+    } else {
+      console.log('No matching text found in transcript');
+    }
+  };
+
+  useEffect(() => {
+    console.log('reference:', reference);
+    if (reference) {
+      handleReferenceClick(reference);
+    }
+  }, [reference]);
 
   useEffect(() => {
     const analyzeTranscript = async () => {
@@ -89,7 +184,6 @@ const RightColumn = ({
             conference_date: conferenceDate,
           }
         );
-        console.log(response.data);
         setQaPairs(response.data.qa_pairs);
       } catch (error) {
         console.error('Error fetching QA pairs:', error);
@@ -111,7 +205,6 @@ const RightColumn = ({
             level: 2,
           }
         );
-        console.log(responseAdvanced.data.speakers);
         setAdvancedTranscriptData(responseAdvanced.data.speakers);
       } catch (error) {
         console.error('Error fetching advanced transcript:', error);
@@ -120,10 +213,34 @@ const RightColumn = ({
       }
     };
 
+    const fetchSentimentAnalysis = async () => {
+      try {
+        const response = await axiosInstance.post(
+          'http://localhost:8000/api/analyze-sentiment/',
+          {
+            exchange,
+            transcript: transcriptData,
+            company_symbol,
+            year,
+            quarter,
+            name,
+            conference_date: conferenceDate,
+          }
+        );
+        console.log('response.data:', response.data);
+        setPositiveSentiments(response.data.positive_sentiments);
+        setNegativeSentiments(response.data.negative_sentiments);
+      } catch (error) {
+        console.error('Error fetching sentiment analysis:', error);
+      } finally {
+      }
+    };
+
     if (transcriptData) {
       analyzeTranscript();
       fetchQaPairs();
       fetchAdvancedTranscript();
+      fetchSentimentAnalysis();
     }
   }, [
     transcriptData,
@@ -206,6 +323,24 @@ const RightColumn = ({
     }
   };
 
+  const renderTranscriptText = (text) => {
+    if (!text) return '';
+
+    // Regular expression to match sentences, avoiding decimal points
+    const sentenceRegex = /([.!?])\s+(?=[A-Z])/g;
+    const sentences = text.split(sentenceRegex) || [text];
+    const formattedSentences = [];
+    for (let i = 0; i < sentences.length - 1; i += 2) {
+      formattedSentences.push(sentences[i] + sentences[i + 1]);
+    }
+
+    return formattedSentences
+      .map((sentence, index) => {
+        return `<span data-sentence="${sentence.trim()}" data-index="${index}">${sentence}</span>`;
+      })
+      .join(' ');
+  };
+
   return (
     <div className='right-column'>
       <header className='right-column-header'>
@@ -275,10 +410,7 @@ const RightColumn = ({
                             <span
                               className='reference'
                               onClick={() =>
-                                console.log(
-                                  `${type} reference:`,
-                                  point.reference
-                                )
+                                handleReferenceClick(point.reference)
                               }
                             >
                               [{idx + 1}]
@@ -318,7 +450,10 @@ const RightColumn = ({
                 ))
               )}
             </div>
-            <div className='transcript-section'>
+            <div
+              className='transcript-section'
+              ref={transcriptRef}
+            >
               <h3>Transcript</h3>
               {loading.transcript ? (
                 <div className='loading-indicator'>Loading transcript...</div>
@@ -330,7 +465,16 @@ const RightColumn = ({
                     className='transcript-item'
                   >
                     <p className='speaker-name'>{item.name}</p>
-                    <p className='speaker-text'>{item.text}</p>
+                    <p
+                      className='speaker-text'
+                      dangerouslySetInnerHTML={{
+                        __html: renderTranscriptText(
+                          should_mark_positive || should_mark_negative
+                            ? highlightSentiment(item.text)
+                            : item.text
+                        ),
+                      }}
+                    />
                   </div>
                 ))
               )}

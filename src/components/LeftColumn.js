@@ -28,6 +28,7 @@ const LeftColumn = ({
   conferenceDate,
   exchange,
   axiosInstance,
+  setReference,
 }) => {
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
 
@@ -67,6 +68,7 @@ const LeftColumn = ({
           conferenceDate={conferenceDate}
           exchange={exchange}
           axiosInstance={axiosInstance}
+          setReference={setReference}
         />
       </div>
     </div>

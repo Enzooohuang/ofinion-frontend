@@ -270,6 +270,24 @@
   overflow-y: auto;
 }
 
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 .transcript-section {
   background-color: #F6F6F6;
   border-radius: 20px;
@@ -302,6 +320,26 @@
 .speaker-text {
   color: #333;
   line-height: 1.4;
+}
+
+.speaker-text span {
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.highlighted-sentence {
+  background-color: yellow;
+  transition: background-color 0.3s ease;
+}
+
+.speaker-text span[style*="border-bottom"] {
+  padding-bottom: 2px;
+  transition: all 0.3s ease;
+}
+
+.speaker-text span[style*="border-bottom"]:hover {
+  background-color: rgba(107, 62, 249, 0.1);
+  border-radius: 3px;
 }
 
 .loading-indicator {

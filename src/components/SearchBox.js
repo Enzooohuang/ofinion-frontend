@@ -4,7 +4,7 @@ import './css/SearchBox.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const SearchBox = () => {
+const SearchBox = ({ onSearch }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -119,23 +119,54 @@ const SearchBox = () => {
     setSelectedEvent(events[eventId]);
   };
 
-  const handleSearch = (selectedCompany, selectedEvent) => {
-    navigate(`/stock/${selectedCompany.symbol}/event`, {
-      state: {
-        year: selectedEvent.year,
-        quarter: selectedEvent.quarter,
-        conferenceDate: selectedEvent.conference_date,
-        symbol: selectedCompany.symbol,
-        exchange: selectedCompany.exchange,
-        name: selectedCompany.name,
-      },
-    });
+  const handleSearch = () => {
+    navigate(
+      `/stock/${selectedCompany.symbol}/Q${selectedEvent.quarter}-${selectedEvent.year}`,
+      {
+        state: {
+          year: selectedEvent.year,
+          quarter: selectedEvent.quarter,
+          conferenceDate: selectedEvent.conference_date,
+          symbol: selectedCompany.symbol,
+          exchange: selectedCompany.exchange,
+          name: selectedCompany.name,
+        },
+      }
+    );
   };
 
   const handleSearchClick = () => {
     if (selectedCompany && selectedEvent) {
-      handleSearch(selectedCompany, selectedEvent);
+      if (onSearch) {
+        handleSubmitNewEvent();
+      } else {
+        handleSearch();
+      }
     }
+  };
+
+  const handleSubmitNewEvent = () => {
+    onSearch({
+      exchange: selectedCompany.exchange,
+      symbol: selectedCompany.symbol,
+      year: selectedEvent.year,
+      quarter: selectedEvent.quarter,
+      name: selectedCompany.name,
+      conferenceDate: selectedEvent.conference_date,
+    });
+    navigate(
+      `/stock/${selectedCompany.symbol}/Q${selectedEvent.quarter}-${selectedEvent.year}`,
+      {
+        state: {
+          year: selectedEvent.year,
+          quarter: selectedEvent.quarter,
+          conferenceDate: selectedEvent.conference_date,
+          symbol: selectedCompany.symbol,
+          exchange: selectedCompany.exchange,
+          name: selectedCompany.name,
+        },
+      }
+    );
   };
 
   return (
