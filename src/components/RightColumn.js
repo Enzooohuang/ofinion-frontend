@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './css/RightColumn.css';
 import { ChevronIcon } from './LeftColumn';
+import axios from 'axios';
 
 const RightColumn = ({
   transcriptData,
@@ -29,6 +30,7 @@ const RightColumn = ({
     qaPairs: true,
     transcript: true,
   });
+  const [searchResults, setSearchResults] = useState([]);
   const transcriptRef = useRef(null);
 
   const should_mark_positive = true;
@@ -62,8 +64,8 @@ const RightColumn = ({
       const { sentence, score } = sentiment;
       const isPositive = positiveSentiments.includes(sentiment);
       const color = isPositive
-        ? `rgba(0, 128, 0, ${Math.min(Math.abs(score) * 0.1, 1.0)})`
-        : `rgba(255, 0, 0, ${Math.min(Math.abs(score) * 0.1, 1.0)})`;
+        ? `rgba(0, 128, 0, ${Math.min(Math.abs(score) * 0.05, 1.0)})`
+        : `rgba(255, 0, 0, ${Math.min(Math.abs(score) * 0.05, 1.0)})`;
 
       let trimmedSentence = sentence.trim();
       if (trimmedSentence.endsWith('.')) {
@@ -83,6 +85,7 @@ const RightColumn = ({
   };
 
   const handleReferenceClick = (reference) => {
+    console.log('reference:', reference);
     // Split the reference into sentences
     const sentenceRegex = /([.!?])\s+(?=[A-Z])/g;
     const referenceSentences = reference.split(sentenceRegex) || [reference];
@@ -309,11 +312,25 @@ const RightColumn = ({
   const formattedDate = formatDate(conferenceDate);
 
   // Dummy function for search
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault(); // Prevent form submission
     console.log('Search query:', searchQuery);
-    // Here you would typically make an API call
-    // For now, we'll just log the query
+
+    if (searchQuery.trim() !== '') {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/api/extract-sentences/',
+          {
+            keyword: searchQuery,
+            transcript: transcriptData,
+          }
+        );
+        console.log('response.data:', response.data.extracted_sentences);
+        setSearchResults(response.data.extracted_sentences);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    }
   };
 
   // Handle key press in the search input
@@ -367,7 +384,16 @@ const RightColumn = ({
               className='search-input'
             />
           </div>
-          {/* Content for the left section (25% width) */}
+          <div className='smart-search-results'>
+            {searchResults.map((sentence, index) => (
+              <p
+                key={index}
+                onClick={() => handleReferenceClick(sentence)}
+              >
+                {sentence}
+              </p>
+            ))}
+          </div>
         </div>
         <div className='right-section'>
           <div className='scrollable-content'>

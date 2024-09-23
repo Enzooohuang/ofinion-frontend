@@ -21,12 +21,16 @@
 }
 
 .left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   width: 25%;
   overflow-y: auto;
   background-color: #d9d9d9;
   border-radius: 20px;
   padding: 20px;
   margin-right: 10px;
+  gap: 0; /* Remove gap between children */
 }
 
 .right-section {
@@ -122,8 +126,10 @@
 }
 
 .search-form {
+  position: relative;
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 5px; /* Remove the margin-bottom */
+  padding: 0; /* Remove any padding */
 }
 
 .search-input {
@@ -133,6 +139,7 @@
   font-size: 14px;
   border-radius: 10px;
   border: none;
+  margin: 0; /* Remove any margin */
 }
 
 .summary-section {
@@ -266,8 +273,8 @@
 }
 
 .scrollable-content {
-  height: 100%;
   overflow-y: auto;
+  height: 100%;
 }
 
 .scrollable-content::-webkit-scrollbar {
@@ -359,4 +366,23 @@
 .qa-pairs-section .loading-indicator,
 .transcript-section .loading-indicator {
   height: 100px;
+}
+
+.smart-search-results {
+  position: relative;
+  flex: 1;
+  overflow-y: auto; /* Allow scrolling if results are too many */
+}
+
+.smart-search-results p {
+  cursor: pointer;
+  padding: 5px 10px 5px 10px;
+  background-color: #F6F6F6;
+  transition: color 0.3s ease;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.smart-search-results p:hover {
+  color: #6B3EF9;
 }
