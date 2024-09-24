@@ -25,6 +25,7 @@ const RightColumn = ({
   const [positiveSentiments, setPositiveSentiments] = useState([]);
   const [negativeSentiments, setNegativeSentiments] = useState([]);
   const [loading, setLoading] = useState({
+    search: false,
     summary: true,
     points: true,
     qaPairs: true,
@@ -86,9 +87,24 @@ const RightColumn = ({
 
   const handleReferenceClick = (reference) => {
     console.log('reference:', reference);
+    // Remove ellipsis from the beginning and end of the reference
+    let cleanReference = reference
+      .replace(/^\.\.\./, '')
+      .replace(/\.\.\.$/, '')
+      .trim();
+
+    // Replace ellipsis in the middle with a period
+    cleanReference = cleanReference.replace(/\s*\.\.\.\s*/g, '. ');
+
+    console.log('cleanReference:', cleanReference);
+
     // Split the reference into sentences
-    const sentenceRegex = /([.!?])\s+(?=[A-Z])/g;
-    const referenceSentences = reference.split(sentenceRegex) || [reference];
+    const sentenceRegex = /([.!?])\s+(?=[a-zA-Z])/g;
+    const referenceSentences = cleanReference.split(sentenceRegex) || [
+      cleanReference,
+    ];
+
+    console.log('referenceSentences:', referenceSentences);
 
     let matchedSpan = null;
 
@@ -99,6 +115,7 @@ const RightColumn = ({
       }
 
       matchedSpan = findSentenceSpan(transcriptRef.current, trimmedSentence);
+      if (matchedSpan) break;
     }
 
     if (matchedSpan) {
@@ -314,9 +331,10 @@ const RightColumn = ({
   // Dummy function for search
   const handleSearch = async (e) => {
     e.preventDefault(); // Prevent form submission
-    console.log('Search query:', searchQuery);
 
+    console.log('searchQuery:', searchResults);
     if (searchQuery.trim() !== '') {
+      setLoading((prev) => ({ ...prev, search: true }));
       try {
         const response = await axios.post(
           'http://localhost:8000/api/extract-sentences/',
@@ -325,8 +343,8 @@ const RightColumn = ({
             transcript: transcriptData,
           }
         );
-        console.log('response.data:', response.data.extracted_sentences);
         setSearchResults(response.data.extracted_sentences);
+        setLoading((prev) => ({ ...prev, search: false }));
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -335,7 +353,7 @@ const RightColumn = ({
 
   // Handle key press in the search input
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !loading.search) {
       handleSearch(e);
     }
   };
@@ -384,16 +402,23 @@ const RightColumn = ({
               className='search-input'
             />
           </div>
-          <div className='smart-search-results'>
-            {searchResults.map((sentence, index) => (
-              <p
-                key={index}
-                onClick={() => handleReferenceClick(sentence)}
-              >
-                {sentence}
-              </p>
-            ))}
-          </div>
+          {loading.search ? (
+            <div className='search-loading-indicator'>
+              <div className='loading-spinner'></div>
+              <p>Searching...</p>
+            </div>
+          ) : (
+            <div className='smart-search-results'>
+              {searchResults.map((sentence, index) => (
+                <p
+                  key={index}
+                  onClick={() => handleReferenceClick(sentence)}
+                >
+                  {sentence}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
         <div className='right-section'>
           <div className='scrollable-content'>
