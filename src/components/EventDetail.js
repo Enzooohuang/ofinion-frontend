@@ -19,6 +19,8 @@ const EventDetail = ({ axiosInstance }) => {
     name: name,
     conferenceDate: conferenceDate,
   });
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [shouldShowSentiment, setShouldShowSentiment] = useState(true);
 
   useEffect(() => {
     const fetchTranscriptData = async () => {
@@ -72,6 +74,10 @@ const EventDetail = ({ axiosInstance }) => {
           axiosInstance={axiosInstance}
           key={`${eventDetails.symbol}-${eventDetails.year}-${eventDetails.quarter}`} // Add this line
           setReference={setReference}
+          searchHistory={searchHistory}
+          setSearchHistory={setSearchHistory}
+          shouldShowSentiment={shouldShowSentiment}
+          setShouldShowSentiment={setShouldShowSentiment}
         />
         {eventDetails && (
           <RightColumn
@@ -84,6 +90,9 @@ const EventDetail = ({ axiosInstance }) => {
             exchange={eventDetails.exchange}
             axiosInstance={axiosInstance}
             reference={reference}
+            searchHistory={searchHistory}
+            setSearchHistory={setSearchHistory}
+            shouldShowSentiment={shouldShowSentiment}
           />
         )}
       </main>

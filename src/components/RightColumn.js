@@ -13,6 +13,9 @@ const RightColumn = ({
   exchange,
   axiosInstance,
   reference,
+  searchHistory,
+  setSearchHistory,
+  shouldShowSentiment,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [summary, setSummary] = useState('');
@@ -33,9 +36,6 @@ const RightColumn = ({
   });
   const [searchResults, setSearchResults] = useState([]);
   const transcriptRef = useRef(null);
-
-  const should_mark_positive = true;
-  const should_mark_negative = true;
 
   const findSentenceSpan = (element, searchText) => {
     const spans = element.querySelectorAll('span[data-sentence]');
@@ -136,11 +136,27 @@ const RightColumn = ({
   };
 
   useEffect(() => {
-    console.log('reference:', reference);
     if (reference) {
       handleReferenceClick(reference);
     }
   }, [reference]);
+
+  useEffect(() => {
+    console.log('searchHistory:', searchHistory);
+    if (searchHistory.length > 0) {
+      const searchHistoryShow = searchHistory.filter(
+        (search) => search.show === true
+      );
+
+      if (searchHistoryShow.length === 0) {
+        setSearchQuery('');
+        setSearchResults([]);
+      } else {
+        setSearchQuery(searchHistoryShow[0].search_query);
+        setSearchResults(searchHistoryShow[0].search_results);
+      }
+    }
+  }, [searchHistory]);
 
   useEffect(() => {
     const analyzeTranscript = async () => {
@@ -247,7 +263,6 @@ const RightColumn = ({
             conference_date: conferenceDate,
           }
         );
-        console.log('response.data:', response.data);
         setPositiveSentiments(response.data.positive_sentiments);
         setNegativeSentiments(response.data.negative_sentiments);
       } catch (error) {
@@ -332,8 +347,16 @@ const RightColumn = ({
   const handleSearch = async (e) => {
     e.preventDefault(); // Prevent form submission
 
-    console.log('searchQuery:', searchResults);
     if (searchQuery.trim() !== '') {
+      if (searchHistory.length > 0) {
+        for (const search of searchHistory) {
+          if (search.search_query === searchQuery) {
+            setSearchResults(search.search_results);
+            return;
+          }
+        }
+      }
+
       setLoading((prev) => ({ ...prev, search: true }));
       try {
         const response = await axios.post(
@@ -345,6 +368,16 @@ const RightColumn = ({
         );
         setSearchResults(response.data.extracted_sentences);
         setLoading((prev) => ({ ...prev, search: false }));
+        const tempHistory = searchHistory.map((search) => ({
+          ...search,
+          show: false,
+        }));
+        tempHistory.push({
+          search_query: searchQuery,
+          search_results: response.data.extracted_sentences,
+          show: true,
+        });
+        setSearchHistory(tempHistory);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -354,6 +387,15 @@ const RightColumn = ({
   // Handle key press in the search input
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !loading.search) {
+      console.log('searchHistory:', searchHistory);
+      if (searchHistory.length > 0) {
+        for (const search of searchHistory) {
+          if (search.search_query === searchQuery) {
+            setSearchResults(search.search_results);
+            return;
+          }
+        }
+      }
       handleSearch(e);
     }
   };
@@ -520,7 +562,7 @@ const RightColumn = ({
                       className='speaker-text'
                       dangerouslySetInnerHTML={{
                         __html: renderTranscriptText(
-                          should_mark_positive || should_mark_negative
+                          shouldShowSentiment
                             ? highlightSentiment(item.text)
                             : item.text
                         ),

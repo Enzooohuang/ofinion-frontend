@@ -19,6 +19,17 @@ export const ChevronIcon = ({ isOpen }) => (
   </svg>
 );
 
+const CircleCheckbox = ({ checked, onChange, isDisabled }) => (
+  <div
+    className={`circle-checkbox ${checked ? 'checked' : ''} ${
+      isDisabled ? 'disabled' : ''
+    }`}
+    onClick={onChange}
+  >
+    {checked && <div className='inner-circle'></div>}
+  </div>
+);
+
 const LeftColumn = ({
   transcriptData,
   company_symbol,
@@ -29,11 +40,29 @@ const LeftColumn = ({
   exchange,
   axiosInstance,
   setReference,
+  searchHistory,
+  setSearchHistory,
+  shouldShowSentiment,
+  setShouldShowSentiment,
 }) => {
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
 
   const togglePanel = () => {
     setIsTranscriptOpen(!isTranscriptOpen);
+  };
+
+  const handleSentimentChange = (type) => {
+    setShouldShowSentiment(!shouldShowSentiment);
+  };
+
+  const handleSearchChange = (query) => {
+    const tempHistory = searchHistory.map((search) => {
+      if (search.search_query !== query) {
+        return { ...search, show: false };
+      }
+      return { ...search, show: !search.show };
+    });
+    setSearchHistory(tempHistory);
   };
 
   return (
@@ -54,7 +83,27 @@ const LeftColumn = ({
             <ChevronIcon isOpen={!isTranscriptOpen} />
           </h3>
           <div className='panel-content'>
-            {/* Add content for Popular & Historical Smart Searches here */}
+            <ul className='smart-search-list'>
+              <li>
+                <CircleCheckbox
+                  checked={shouldShowSentiment}
+                  onChange={() => handleSentimentChange('positive')}
+                  isDisabled={true}
+                />
+                <span className='sentiment-text positive'>Positive</span> and{' '}
+                <span className='sentiment-text negative'>Negative</span>{' '}
+                <span>Sentiments</span>
+              </li>
+              {searchHistory.map((item, index) => (
+                <li key={index}>
+                  <CircleCheckbox
+                    checked={item.show}
+                    onChange={() => handleSearchChange(item.search_query)}
+                  />
+                  <span>{item.search_query}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

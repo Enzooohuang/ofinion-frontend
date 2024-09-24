@@ -113,3 +113,73 @@
 .chevron-icon.open {
   transform: rotate(180deg);
 }
+
+.smart-search-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px;
+}
+
+.smart-search-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.smart-search-list select {
+  margin-right: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.smart-search-list span {
+  font-size: 16px;
+  color: #333;
+}
+
+.circle-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #6B3EF9;
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.circle-checkbox.checked {
+  background-color: #6B3EF9;
+}
+
+.circle-checkbox .inner-circle {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.circle-checkbox.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  background-color: #555;
+}
+
+.sentiment-text.positive {
+  border-bottom: 2px solid rgba(0, 128, 0, 0.5);
+  padding-bottom: 2px;
+  margin-right: 5px;
+}
+
+.sentiment-text.negative {
+  border-bottom: 2px solid rgba(255, 0, 0, 0.5);
+  padding-bottom: 2px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
