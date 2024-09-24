@@ -95,7 +95,11 @@ const LeftColumn = ({
                 <span>Sentiments</span>
               </li>
               {searchHistory.map((item, index) => (
-                <li key={index}>
+                <li
+                  className='smart-search-item'
+                  key={index}
+                  onClick={() => handleSearchChange(item.search_query)}
+                >
                   <CircleCheckbox
                     checked={item.show}
                     onChange={() => handleSearchChange(item.search_query)}
