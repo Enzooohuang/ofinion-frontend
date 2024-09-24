@@ -147,7 +147,6 @@ const RightColumn = ({
       const searchHistoryShow = searchHistory.filter(
         (search) => search.show === true
       );
-
       if (searchHistoryShow.length === 0) {
         setSearchQuery('');
         setSearchResults([]);
@@ -155,6 +154,9 @@ const RightColumn = ({
         setSearchQuery(searchHistoryShow[0].search_query);
         setSearchResults(searchHistoryShow[0].search_results);
       }
+    } else {
+      setSearchQuery('');
+      setSearchResults([]);
     }
   }, [searchHistory]);
 

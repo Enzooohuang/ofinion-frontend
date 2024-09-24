@@ -65,6 +65,14 @@ const LeftColumn = ({
     setSearchHistory(tempHistory);
   };
 
+  const handleRemoveSearch = (query, event) => {
+    event.stopPropagation(); // Prevent triggering the onClick of the parent li
+    const tempHistory = searchHistory.filter(
+      (search) => search.search_query !== query
+    );
+    setSearchHistory(tempHistory);
+  };
+
   return (
     <div className='left-column'>
       <div className='top-component'>
@@ -84,7 +92,7 @@ const LeftColumn = ({
           </h3>
           <div className='panel-content'>
             <ul className='smart-search-list'>
-              <li>
+              <li className='sentiment-item'>
                 <CircleCheckbox
                   checked={shouldShowSentiment}
                   onChange={() => handleSentimentChange('positive')}
@@ -105,6 +113,12 @@ const LeftColumn = ({
                     onChange={() => handleSearchChange(item.search_query)}
                   />
                   <span>{item.search_query}</span>
+                  <span
+                    className='remove-search'
+                    onClick={(e) => handleRemoveSearch(item.search_query, e)}
+                  >
+                    &#x2715;
+                  </span>
                 </li>
               ))}
             </ul>
