@@ -57,7 +57,7 @@
 
 .input-form {
   display: flex;
-  padding: 10px;
+  padding: 5px;
   background-color: #d9d9d9;
   border-radius: 20px;
   align-items: center; /* This will vertically center the input and button */
@@ -99,10 +99,10 @@
 .expert-questions {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   height: 100%;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .expert-question-button {

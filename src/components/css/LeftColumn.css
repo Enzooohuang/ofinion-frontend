@@ -34,6 +34,7 @@
 }
 
 .top-component {
+  height: 40%;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -41,8 +42,7 @@
 }
 
 .bottom-component {
-  height: 40%; /* Adjust this value to balance with top-component */
-  min-height: 700px; /* Ensure a minimum height for the chat */
+  height: 60%; /* Adjust this value to balance with top-component */
   display: flex;
   flex-direction: column;
   background-color: white;/* Add some space between top and bottom components */
@@ -177,6 +177,7 @@
   margin-right: 10px;
   cursor: pointer;
   position: relative;
+  min-width: 20px;
 }
 
 .circle-checkbox.checked {
