@@ -27,7 +27,7 @@ const Box1 = () => {
         style={{
           color: 'darkgray',
           fontSize: '20px',
-          maxWidth: '80%',
+          maxWidth: '100%',
           lineHeight: '1.5',
         }}
       >
@@ -38,7 +38,7 @@ const Box1 = () => {
         style={{
           color: 'black',
           fontSize: '24px',
-          maxWidth: '80%',
+          maxWidth: '100%',
           lineHeight: '1.5',
         }}
       >

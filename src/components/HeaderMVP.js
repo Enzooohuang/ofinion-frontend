@@ -20,12 +20,12 @@ const HeaderMVP = ({ user, onLogout }) => {
       <div className='button-container'>
         {user ? (
           <>
-            <span className='welcome-message'>
+            {/* <span className='welcome-message'>
               Welcome, {user.email}
               {user.times_remaining !== undefined && (
                 <>, you have {user.times_remaining} times remaining</>
               )}
-            </span>
+            </span> */}
             <button
               onClick={onLogout}
               className='button logout-button'

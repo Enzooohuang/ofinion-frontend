@@ -1,12 +1,13 @@
 import React from 'react';
+import EarningsEventsList from './EarningsEventsList';
 
 const Box3 = () => {
   return (
     <div
       className='box'
-      style={{ backgroundColor: '#F44336' }}
+      style={{ padding: '20px' }}
     >
-      <h2>Box 3</h2>
+      <EarningsEventsList />
     </div>
   );
 };

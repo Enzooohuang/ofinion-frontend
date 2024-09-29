@@ -1,12 +1,26 @@
 import React from 'react';
+import screenshot from '../assets/screenshot.png'; // Adjust the path as needed
 
 const Box6 = () => {
   return (
     <div
       className='box'
-      style={{ backgroundColor: '#FF5722' }}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '10px',
+      }}
     >
-      <h2>Box 6</h2>
+      <img
+        src={screenshot}
+        alt='Screenshot'
+        style={{
+          width: '80%',
+          maxWidth: '100%',
+          height: 'auto',
+        }}
+      />
     </div>
   );
 };

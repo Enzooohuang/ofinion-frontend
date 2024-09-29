@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Header from './components/Header';
 import HeaderMVP from './components/HeaderMVP';
@@ -32,6 +37,32 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+function TitleUpdater() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    let title = 'oFinion';
+
+    if (path === '/') {
+      title = 'oFinion';
+    } else if (path.startsWith('/stock/')) {
+      const symbol = path.split('/')[2];
+      const event = path.split('/')[3];
+      title = `${symbol} ${event} | oFinion`;
+    } else if (path === '/join') {
+      title = 'Join Free | oFinion';
+    } else if (path === '/login') {
+      title = 'Login | oFinion';
+    }
+    // Add more conditions for other pages as needed
+
+    document.title = title;
+  }, [location]);
+
+  return null;
+}
 
 function App() {
   const [user, setUser] = useState(null);
@@ -78,6 +109,7 @@ function App() {
   return (
     <GoogleOAuthProvider clientId='1030657402341-nqqo3nti4geuu29h01g4pr91l20dchqk.apps.googleusercontent.com'>
       <Router>
+        <TitleUpdater />
         {useMVP ? (
           <div className='App mvp-layout'>
             <HeaderMVP
@@ -85,7 +117,6 @@ function App() {
               onLogout={handleLogout}
             />
             <div style={{ flexGrow: 1, overflow: 'auto' }}>
-              {/* Added this wrapper */}
               <Routes>
                 <Route
                   path='/'
