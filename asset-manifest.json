@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/ofinion-frontend/static/css/main.7ff753a2.css",
+    "main.js": "/ofinion-frontend/static/js/main.bc0e99df.js",
+    "static/js/453.1a2cba76.chunk.js": "/ofinion-frontend/static/js/453.1a2cba76.chunk.js",
+    "static/media/screenshot.png": "/ofinion-frontend/static/media/screenshot.1b3fc62b2ed405594c38.png",
+    "static/media/displayimg.png": "/ofinion-frontend/static/media/displayimg.c0afbd66396e7e129eec.png",
+    "static/media/Footer.png": "/ofinion-frontend/static/media/Footer.4069b4f23d88b7ec8eb3.png",
+    "static/media/section.png": "/ofinion-frontend/static/media/section.8a1b0aaf837e820c9226.png",
+    "static/media/logo.png": "/ofinion-frontend/static/media/logo.b731b7aa2e61b686ba6b.png",
+    "static/media/smalllogo.png": "/ofinion-frontend/static/media/smalllogo.f27afaff3e33f99f3f09.png",
+    "index.html": "/ofinion-frontend/index.html",
+    "main.7ff753a2.css.map": "/ofinion-frontend/static/css/main.7ff753a2.css.map",
+    "main.bc0e99df.js.map": "/ofinion-frontend/static/js/main.bc0e99df.js.map",
+    "453.1a2cba76.chunk.js.map": "/ofinion-frontend/static/js/453.1a2cba76.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7ff753a2.css",
+    "static/js/main.bc0e99df.js"
+  ]
+}
