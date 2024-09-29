@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import './css/AIConversation.css';
 import defaultUserImage from '../assets/defaultimage.jpg';
 import defaultAIImage from '../assets/smalllogo.png';
@@ -25,6 +24,7 @@ const AIConversation = ({
   exchange,
   axiosInstance,
   setReference,
+  baseUrl,
 }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -61,7 +61,7 @@ const AIConversation = ({
       }
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/generate-expert-questions/',
+          `${baseUrl}/api/generate-expert-questions/`,
           {
             transcript,
             company_symbol,
@@ -90,6 +90,7 @@ const AIConversation = ({
     conferenceDate,
     exchange,
     axiosInstance,
+    baseUrl,
   ]);
 
   const handleSubmit = (e) => {
@@ -113,8 +114,8 @@ const AIConversation = ({
   const getAIResponse = async (question) => {
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        'http://localhost:8000/api/answer-question/',
+      const response = await axiosInstance.post(
+        `${baseUrl}/api/answer-question/`,
         {
           transcript,
           question,
@@ -167,7 +168,6 @@ const AIConversation = ({
 
   const handleReferenceClick = (reference) => {
     setReference(reference);
-    console.log('Reference clicked:', reference);
   };
 
   return (

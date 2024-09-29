@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 
-const JoinFree = ({ onLogin, axiosInstance }) => {
+const JoinFree = ({ onLogin, axiosInstance, baseUrl }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -13,7 +13,7 @@ const JoinFree = ({ onLogin, axiosInstance }) => {
     e.preventDefault();
     try {
       const response = await axiosInstance.post(
-        'http://localhost:8000/api/user/email-signup/',
+        `${baseUrl}/api/user/email-signup/`,
         {
           email,
           password,
@@ -21,7 +21,6 @@ const JoinFree = ({ onLogin, axiosInstance }) => {
           family_name: lastName,
         }
       );
-      console.log('Response:', response.data);
       onLogin(response.data);
       navigate('/');
     } catch (error) {
@@ -72,6 +71,7 @@ const JoinFree = ({ onLogin, axiosInstance }) => {
         onSuccess={handleGoogleSignupSuccess}
         buttonText='Sign up with Google'
         axiosInstance={axiosInstance}
+        baseUrl={baseUrl}
       />
     </div>
   );

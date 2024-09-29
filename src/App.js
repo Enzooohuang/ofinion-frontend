@@ -24,6 +24,8 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+const BASE_URL = 'https://ofinion-backend-fb52fcfebf26.herokuapp.com';
+
 // Add a request interceptor to include CSRF token
 axiosInstance.interceptors.request.use(
   function (config) {
@@ -73,7 +75,7 @@ function App() {
     const checkUserSession = async () => {
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/user/check-session/'
+          `${BASE_URL}/api/user/check-session/`
         );
         if (response.data) {
           setUser(response.data);
@@ -97,7 +99,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post('http://localhost:8000/api/user/email-logout/');
+      await axiosInstance.post(`${BASE_URL}/api/user/email-logout/`);
       setUser(null);
     } catch (error) {
       console.error('Error logging out:', error);
@@ -120,11 +122,21 @@ function App() {
               <Routes>
                 <Route
                   path='/'
-                  element={<MainContentMVP />}
+                  element={
+                    <MainContentMVP
+                      axiosInstance={axiosInstance}
+                      baseUrl={BASE_URL}
+                    />
+                  }
                 />
                 <Route
                   path='/stock/:symbol/:id'
-                  element={<EventDetail axiosInstance={axiosInstance} />}
+                  element={
+                    <EventDetail
+                      axiosInstance={axiosInstance}
+                      baseUrl={BASE_URL}
+                    />
+                  }
                 />
                 <Route
                   path='/join'
@@ -132,6 +144,7 @@ function App() {
                     <JoinFree
                       onLogin={handleLogin}
                       axiosInstance={axiosInstance}
+                      baseUrl={BASE_URL}
                     />
                   }
                 />
@@ -141,6 +154,7 @@ function App() {
                     <Login
                       onLogin={handleLogin}
                       axiosInstance={axiosInstance}
+                      baseUrl={BASE_URL}
                     />
                   }
                 />

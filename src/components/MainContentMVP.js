@@ -7,14 +7,20 @@ import SearchBoxSection from './SearchBoxSection';
 import Box6 from './Box6';
 import BottomBox from './BottomBox';
 
-const MainContentMVP = () => {
+const MainContentMVP = ({ axiosInstance, baseUrl }) => {
   return (
     <div className='main-content-mvp'>
       <Box1 />
       <DisplayImage />
-      <Box3 />
+      <Box3
+        axiosInstance={axiosInstance}
+        baseUrl={baseUrl}
+      />
       <Box4 />
-      <SearchBoxSection />
+      <SearchBoxSection
+        axiosInstance={axiosInstance}
+        baseUrl={baseUrl}
+      />
       <Box6 />
       <BottomBox />
     </div>

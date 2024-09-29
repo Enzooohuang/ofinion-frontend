@@ -1,13 +1,16 @@
 import React from 'react';
 import EarningsEventsList from './EarningsEventsList';
 
-const Box3 = () => {
+const Box3 = ({ axiosInstance, baseUrl }) => {
   return (
     <div
       className='box'
       style={{ padding: '20px' }}
     >
-      <EarningsEventsList />
+      <EarningsEventsList
+        axiosInstance={axiosInstance}
+        baseUrl={baseUrl}
+      />
     </div>
   );
 };

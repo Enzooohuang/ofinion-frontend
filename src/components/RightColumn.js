@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './css/RightColumn.css';
 import { ChevronIcon } from './LeftColumn';
-import axios from 'axios';
 
 const RightColumn = ({
   transcriptData,
@@ -16,6 +15,7 @@ const RightColumn = ({
   searchHistory,
   setSearchHistory,
   shouldShowSentiment,
+  baseUrl,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [summary, setSummary] = useState('');
@@ -86,7 +86,6 @@ const RightColumn = ({
   };
 
   const handleReferenceClick = (reference) => {
-    console.log('reference:', reference);
     // Remove ellipsis from the beginning and end of the reference
     let cleanReference = reference
       .replace(/^\.\.\./, '')
@@ -96,15 +95,11 @@ const RightColumn = ({
     // Replace ellipsis in the middle with a period
     cleanReference = cleanReference.replace(/\s*\.\.\.\s*/g, '. ');
 
-    console.log('cleanReference:', cleanReference);
-
     // Split the reference into sentences
     const sentenceRegex = /([.!?])\s+(?=[a-zA-Z])/g;
     const referenceSentences = cleanReference.split(sentenceRegex) || [
       cleanReference,
     ];
-
-    console.log('referenceSentences:', referenceSentences);
 
     let matchedSpan = null;
 
@@ -123,7 +118,6 @@ const RightColumn = ({
         behavior: 'smooth',
         block: 'center',
       });
-      console.log('Scrolling to element');
 
       // Highlight the matched span
       matchedSpan.classList.add('highlighted-sentence');
@@ -142,7 +136,6 @@ const RightColumn = ({
   }, [reference]);
 
   useEffect(() => {
-    console.log('searchHistory:', searchHistory);
     if (searchHistory.length > 0) {
       const searchHistoryShow = searchHistory.filter(
         (search) => search.show === true
@@ -165,7 +158,7 @@ const RightColumn = ({
       setLoading((prev) => ({ ...prev, summary: true, points: true }));
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/analyze-transcript/',
+          `${baseUrl}/api/analyze-transcript/`,
           {
             exchange: exchange.toUpperCase(),
             transcript: transcriptData,
@@ -211,7 +204,7 @@ const RightColumn = ({
       setLoading((prev) => ({ ...prev, qaPairs: true }));
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/paraphrase-qa/',
+          `${baseUrl}/api/paraphrase-qa/`,
           {
             exchange: exchange.toUpperCase(),
             transcript: transcriptData,
@@ -234,7 +227,7 @@ const RightColumn = ({
       setLoading((prev) => ({ ...prev, transcript: true }));
       try {
         const responseAdvanced = await axiosInstance.post(
-          'http://localhost:8000/api/stock-data/',
+          `${baseUrl}/api/stock-data/`,
           {
             exchange,
             symbol: company_symbol,
@@ -254,7 +247,7 @@ const RightColumn = ({
     const fetchSentimentAnalysis = async () => {
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/analyze-sentiment/',
+          `${baseUrl}/api/analyze-sentiment/`,
           {
             exchange,
             transcript: transcriptData,
@@ -288,6 +281,7 @@ const RightColumn = ({
     name,
     conferenceDate,
     axiosInstance,
+    baseUrl,
   ]);
 
   useEffect(() => {
@@ -361,8 +355,8 @@ const RightColumn = ({
 
       setLoading((prev) => ({ ...prev, search: true }));
       try {
-        const response = await axios.post(
-          'http://localhost:8000/api/extract-sentences/',
+        const response = await axiosInstance.post(
+          `${baseUrl}/api/extract-sentences/`,
           {
             keyword: searchQuery,
             transcript: transcriptData,
@@ -389,7 +383,6 @@ const RightColumn = ({
   // Handle key press in the search input
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !loading.search) {
-      console.log('searchHistory:', searchHistory);
       if (searchHistory.length > 0) {
         for (const search of searchHistory) {
           if (search.search_query === searchQuery) {

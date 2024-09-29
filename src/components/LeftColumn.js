@@ -44,6 +44,7 @@ const LeftColumn = ({
   setSearchHistory,
   shouldShowSentiment,
   setShouldShowSentiment,
+  baseUrl,
 }) => {
   const [isTranscriptOpen, setIsTranscriptOpen] = useState(false);
 
@@ -136,6 +137,7 @@ const LeftColumn = ({
           exchange={exchange}
           axiosInstance={axiosInstance}
           setReference={setReference}
+          baseUrl={baseUrl}
         />
       </div>
     </div>

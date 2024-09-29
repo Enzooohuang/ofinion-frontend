@@ -5,7 +5,7 @@ import LeftColumn from './LeftColumn';
 import RightColumn from './RightColumn';
 import './css/EventDetail.css';
 
-const EventDetail = ({ axiosInstance }) => {
+const EventDetail = ({ axiosInstance, baseUrl }) => {
   const location = useLocation();
   const { year, quarter, conferenceDate, symbol, exchange, name } =
     location.state || {};
@@ -26,7 +26,7 @@ const EventDetail = ({ axiosInstance }) => {
     const fetchTranscriptData = async () => {
       try {
         const response = await axiosInstance.post(
-          'http://localhost:8000/api/stock-data/',
+          `${baseUrl}/api/stock-data/`,
           {
             exchange: eventDetails.exchange,
             symbol: eventDetails.symbol,
@@ -49,7 +49,7 @@ const EventDetail = ({ axiosInstance }) => {
     ) {
       fetchTranscriptData();
     }
-  }, [eventDetails, axiosInstance]);
+  }, [eventDetails, axiosInstance, baseUrl]);
 
   const handleSearch = (searchParams) => {
     // Reset transcriptData to trigger a reload of AIConversation
@@ -60,7 +60,11 @@ const EventDetail = ({ axiosInstance }) => {
   return (
     <div className='event-detail-container'>
       <header className='event-detail-header'>
-        <SearchBox onSearch={handleSearch} />
+        <SearchBox
+          onSearch={handleSearch}
+          axiosInstance={axiosInstance}
+          baseUrl={baseUrl}
+        />
       </header>
       <main className='event-detail-main'>
         <LeftColumn
@@ -78,6 +82,7 @@ const EventDetail = ({ axiosInstance }) => {
           setSearchHistory={setSearchHistory}
           shouldShowSentiment={shouldShowSentiment}
           setShouldShowSentiment={setShouldShowSentiment}
+          baseUrl={baseUrl}
         />
         {eventDetails && (
           <RightColumn
@@ -93,6 +98,7 @@ const EventDetail = ({ axiosInstance }) => {
             searchHistory={searchHistory}
             setSearchHistory={setSearchHistory}
             shouldShowSentiment={shouldShowSentiment}
+            baseUrl={baseUrl}
           />
         )}
       </main>

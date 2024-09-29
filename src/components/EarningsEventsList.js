@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './css/EarningsEventsList.css';
 import { useNavigate } from 'react-router-dom';
 
-const EarningsEventsList = () => {
+const EarningsEventsList = ({ axiosInstance, baseUrl }) => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -12,8 +11,8 @@ const EarningsEventsList = () => {
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          'http://localhost:8000/api/recent-company-events/'
+        const response = await axiosInstance.get(
+          `${baseUrl}/api/recent-company-events/`
         );
         setEvents(response.data);
       } catch (error) {
@@ -24,7 +23,7 @@ const EarningsEventsList = () => {
     };
 
     fetchEvents();
-  }, []);
+  }, [axiosInstance, baseUrl]);
 
   const handleClick = (event) => {
     navigate(`/stock/${event.symbol}/Q${event.quarter}-${event.year}`, {

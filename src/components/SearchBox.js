@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import './css/SearchBox.css';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const SearchBox = ({ onSearch }) => {
+const SearchBox = ({ axiosInstance, baseUrl, onSearch }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -18,9 +17,7 @@ const SearchBox = ({ onSearch }) => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get(
-          'http://localhost:8000/api/companies/'
-        );
+        const response = await axiosInstance.get(`${baseUrl}/api/companies/`);
         return response.data;
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -32,13 +29,13 @@ const SearchBox = ({ onSearch }) => {
       setCompanies(fetchedCompanies);
     };
     getCompanies();
-  }, []);
+  }, [axiosInstance, baseUrl]);
 
   useEffect(() => {
     const fetchEvents = async (selectedCompany) => {
       try {
-        const response = await axios.post(
-          'http://localhost:8000/api/company-events/',
+        const response = await axiosInstance.post(
+          `${baseUrl}/api/company-events/`,
           {
             exchange: selectedCompany.exchange,
             symbol: selectedCompany.symbol,
@@ -62,7 +59,7 @@ const SearchBox = ({ onSearch }) => {
       }
     };
     getEvents();
-  }, [selectedCompany]);
+  }, [axiosInstance, baseUrl, selectedCompany]);
 
   const searchCompanies = useCallback(
     (term) => {
