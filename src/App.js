@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   Routes,
   useLocation,
@@ -19,12 +19,15 @@ import { getCsrfTokenFromCookie } from './utils/csrf';
 import './global.css'; // Import the global CSS file
 import Footer from './components/Footer'; // Add this import
 
+const BASE_URL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8000'
+    : 'https://ofinion-backend-fb52fcfebf26.herokuapp.com';
+
 // Create a new axios instance with default config
 const axiosInstance = axios.create({
   withCredentials: true,
 });
-
-const BASE_URL = 'https://ofinion-backend-fb52fcfebf26.herokuapp.com';
 
 // Add a request interceptor to include CSRF token
 axiosInstance.interceptors.request.use(
@@ -121,6 +124,7 @@ function App() {
             <div style={{ flexGrow: 1, overflow: 'auto' }}>
               <Routes>
                 <Route
+                  exact
                   path='/'
                   element={
                     <MainContentMVP
@@ -153,6 +157,15 @@ function App() {
                   element={
                     <Login
                       onLogin={handleLogin}
+                      axiosInstance={axiosInstance}
+                      baseUrl={BASE_URL}
+                    />
+                  }
+                />
+                <Route
+                  path='*'
+                  element={
+                    <MainContentMVP
                       axiosInstance={axiosInstance}
                       baseUrl={BASE_URL}
                     />
