@@ -14,6 +14,7 @@ import MainContentMVP from './components/MainContentMVP';
 import EventDetail from './components/EventDetail';
 import JoinFree from './components/JoinFree';
 import Login from './components/Login';
+import CookieConsent from './components/CookieConsent';
 import axios from 'axios';
 import { getCsrfTokenFromCookie } from './utils/csrf';
 import './global.css'; // Import the global CSS file
@@ -36,6 +37,7 @@ axiosInstance.interceptors.request.use(
     if (csrfToken) {
       config.headers['X-CSRFToken'] = csrfToken;
     }
+    console.log(csrfToken);
     return config;
   },
   function (error) {
@@ -115,6 +117,7 @@ function App() {
     <GoogleOAuthProvider clientId='1030657402341-nqqo3nti4geuu29h01g4pr91l20dchqk.apps.googleusercontent.com'>
       <Router>
         <TitleUpdater />
+        <CookieConsent />
         {useMVP ? (
           <div className='App mvp-layout'>
             <HeaderMVP
